@@ -1,0 +1,63 @@
+version: '3.7'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: mariadb
+    environment:
+      - MYSQL_ROOT_PASSWORD=developsy@2516
+    restart: always
+    volumes:
+      - /opt/mysql:/var/lib/mysql
+    networks:
+      - db
+
+  nginx-proxy:
+    build:
+      context: ./nginx-proxy
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs/payara:/etc/nginx/certs
+    networks:
+      - proxy
+
+  phpmyadmin:
+    build:
+      context: ./phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - VIRTUAL_HOST=phpmyadmin.solay.ga
+      - PMA_ABSOLUTE_URI=http://phpmyadmin.solay.ga/
+      - PMA_HOST=mariadb
+    volumes:
+      - /sessions
+    networks:
+      - proxy
+      - db
+    depends_on:
+      - mariadb
+
+  payara:
+    build:
+      context: ./payara
+    image: payara:mariadb
+    container_name: payara
+    environment:
+      - VIRTUAL_HOST=deploy.payara.solay.ga:8181,adm.payara.solay.ga:4848,debug.payara.solay.ga:9009
+      - VIRTUAL_PROTO=https
+    networks:
+      - proxy
+      - db
+    depends_on:
+      - mariadb
+
+networks:
+  proxy:
+  db:
+

@@ -1,0 +1,3 @@
+location /admin {
+    proxy_pass http://payara.solay.ga;
+}

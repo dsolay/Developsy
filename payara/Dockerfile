@@ -1,0 +1,13 @@
+FROM payara/server-full
+
+# MariaDB Connector/J version (2.4.0)
+ARG MARIADB_CONNECTOR_VERSION=2.4.0
+ARG MARIADB_CONNECTOR_NAME=mariadb-java-client-${MARIADB_CONNECTOR_VERSION}
+ARG MARIADB_CONNECTOR_URL=http://downloads.mariadb.com/Connectors/java/connector-java-${MARIADB_CONNECTOR_VERSION}/${MARIADB_CONNECTOR_NAME}.jar
+ARG MARIADB_CONNECTOR_SHA1=87f88656d9cf5381fc3c11c8e52d42f9eb23247c
+
+ENV PAYARA_LIBS_DIR=${PAYARA_DIR}/glassfish/domains/${DOMAIN_NAME}/lib/ext
+
+RUN wget --no-verbose -O ${MARIADB_CONNECTOR_NAME}.jar ${MARIADB_CONNECTOR_URL} && \
+    echo "${MARIADB_CONNECTOR_SHA1} *${MARIADB_CONNECTOR_NAME}.jar" | sha1sum -c - && \
+    mv ${MARIADB_CONNECTOR_NAME}.jar ${PAYARA_LIBS_DIR}
