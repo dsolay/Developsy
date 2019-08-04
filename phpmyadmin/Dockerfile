@@ -56,7 +56,7 @@ RUN set -ex; \
     mv /usr/src/phpMyAdmin-$VERSION-all-languages /usr/src/phpmyadmin; \
     rm -rf /usr/src/phpmyadmin/setup/ /usr/src/phpmyadmin/examples/ /usr/src/phpmyadmin/doc/ /usr/src/phpmyadmin/test/ /usr/src/phpmyadmin/po/ /usr/src/phpmyadmin/composer.json /usr/src/phpmyadmin/composer.lock /usr/src/phpmyadmin/RELEASE-DATE-$VERSION; \
     sed -i "s@define('CONFIG_DIR'.*@define('CONFIG_DIR', '/etc/phpmyadmin/');@" /usr/src/phpmyadmin/libraries/vendor_config.php; \
-# Add directory for sessions to allow session persistence
+    # Add directory for sessions to allow session persistence
     mkdir /sessions; \
     mkdir -p /var/nginx/client_body_temp; \
     apk del .fetch-deps
@@ -64,6 +64,9 @@ RUN set -ex; \
 # Copy configuration
 COPY etc /etc/
 COPY php.ini /usr/local/etc/php/conf.d/php-phpmyadmin.ini
+
+# permisos  
+RUN chmod 644 /etc/phpmyadmin/config.inc.php
 
 # Copy main script
 COPY run.sh /run.sh
