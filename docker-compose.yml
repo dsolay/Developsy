@@ -14,6 +14,19 @@ services:
     networks:
       - db_net
 
+  pg:
+    image: postgres:12-alpine
+    container_name: pg
+    env_file:
+      - env/postgres.env
+    restart: unless-stopped
+    ports:
+      - 5432:5432
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - db_net
+
   proxy:
     build:
       context: ./nginx-proxy
@@ -43,6 +56,18 @@ services:
       - db_net
     depends_on:
       - db
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    env_file:
+      - env/pgadmin.env
+    volumes:
+      - pgadmin:/root/.pgadmin
+    networks:
+      - proxy
+      - db_net
+    restart: unless-stopped
 
   payara:
     build:
@@ -85,6 +110,8 @@ networks:
 
 volumes:
   database_volume:
+  pgdata:
+  pgadmin:
   gpg_volume:
   images_volume:
   sessions:

@@ -23,7 +23,7 @@ lamp() {
 passbolt() {
     if [[ ! -n $(sudo docker ps --filter="name=passbolt" -q)  ]]; then
         echo "Start passbolt..."
-        sudo -E docker-compose up -d passbolt
+        sudo -E docker-compose up -d db passbolt
     fi
 
     #
