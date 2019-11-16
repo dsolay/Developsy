@@ -23,6 +23,4 @@ RUN wget --no-verbose -O /tmp/${MARIADB_CONNECTOR_NAME}.jar ${MARIADB_CONNECTOR_
     echo "${MYSQL_CONNECTOR_MD5} /tmp/${MYSQL_CONNECTOR_NAME}.tar.gz" | md5sum -c - && \
     tar -C /tmp -xzvf /tmp/${MYSQL_CONNECTOR_NAME}.tar.gz && \
     mv /tmp/${MARIADB_CONNECTOR_NAME}.jar /tmp/${MYSQL_CONNECTOR_NAME}/${MYSQL_CONNECTOR_NAME}.jar ${PAYARA_LIBS_DIR} && \
-    #${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${ADMIN_PASSWORD} add-library /tmp/${MARIADB_CONNECTOR_NAME}.jar && \
-    #${PAYARA_DIR}/bin/asadmin --user=${ADMIN_USER} --passwordfile=${ADMIN_PASSWORD} add-library /tmp/${MYSQL_CONNECTOR_NAME}/${MYSQL_CONNECTOR_NAME}.jar && \
     rm -rf /tmp/${MARIADB_CONNECTOR_NAME}.jar /tmp/${MYSQL_CONNECTOR_NAME}.tar.gz /tmp/${MYSQL_CONNECTOR_NAME}

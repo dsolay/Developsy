@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "database": "db_ease4job",
+            "dialect": "PostgreSQL",
+            "name": "ease4job",
+            "password": "cds@pg19!",
+            "port": 5432,
+            "server": "ease4job.studio",
+            "username": "postgres"
+        }
+    ]
+}
