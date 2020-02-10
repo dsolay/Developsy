@@ -1,0 +1,15 @@
+{
+	"segments": {
+		"left": [
+			{
+				"function": "powerline_gitstatus.gitstatus"
+			},
+			{
+				"function": "powerline.segments.shell.cwd"
+			},
+			{
+				"function": "powerline.segments.shell.last_status"
+			}
+		]
+	}
+}

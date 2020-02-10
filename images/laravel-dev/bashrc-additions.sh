@@ -1,0 +1,1 @@
+[ -d "$HOME/.composer/vendor/bin" ] && appendpath "$HOME/.composer/vendor/bin"

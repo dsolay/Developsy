@@ -1,0 +1,5 @@
+{
+    "name": "laravel/global",
+    "description": "Global composer",
+    "require": {}
+} 

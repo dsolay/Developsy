@@ -1,94 +1,28 @@
 version: '3.7'
 
 services:
-  mariadb:
-    image: mariadb:10.4.8-bionic
-    container_name: mariadb
-    env_file:
-      - env/mysql.env
-    restart: always
-    ports:
-      - 3306:3306
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    networks:
-      - net_db
+    base:
+        build:
+            context: ./images/base
+            dockerfile: Dockerfile
+            args:
+                - UBUNTU_RELEASE=${UBUNTU_RELEASE}
+                - USERNAME=${USERNAME}
+                - TZ=${TIMEZONE}
+        image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
 
-  postgres:
-    image: postgres:12-alpine
-    container_name: pg
-    env_file:
-      - env/postgres.env
-    restart: unless-stopped
-    ports:
-      - 5432:5432
-    volumes:
-      - pgdata:/var/lib/postgresql/data
-    networks:
-      - net_db
+    enviroment:
+        build:
+            context: ./images/enviroment
+            dockerfile: Dockerfile
+            args:
+                - BASE_TAG=${BASE_TAG}
+        image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
 
-  proxy:
-    image: jwilder/nginx-proxy:alpine
-    container_name: nginx-proxy
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./vhost.d:/etc/nginx/vhost.d:ro
-    networks:
-      - net_proxy
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    env_file:
-      - env/phpmyadmin.env
-    volumes:
-      - sessions
-    networks:
-      - net_proxy
-      - net_db
-    depends_on:
-      - mariadb
-  
-  pgadmin:
-    container_name: pgadmin
-    image: dpage/pgadmin4
-    env_file:
-      - env/pgadmin.env
-    volumes:
-      - pgadmin:/root/.pgadmin
-    networks:
-      - net_proxy
-      - net_db
-    restart: unless-stopped
-
-  payara:
-    build:
-      context: ./payara
-    image: payara:db
-    container_name: payara
-    env_file:
-      - env/payara.env
-    networks:
-      - net_proxy
-      - net_db
-    depends_on:
-      - mariadb
-
-networks:
-  net_proxy:
-  net_db:
-
-volumes:
-  mariadb_data:
-  pgdata:
-  pgadmin:
-  sessions:
-  vhosts:
-    driver: local
-    driver_opts:
-      type: none
-      device: ${PWD}/vhost.d
-      o: bind
+    laravel-dev:
+        build:
+            context: ./images/laravel-dev
+            dockerfile: Dockerfile
+            args:
+                - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+        image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
