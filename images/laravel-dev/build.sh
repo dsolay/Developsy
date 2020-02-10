@@ -48,9 +48,14 @@ composer global require "hirak/prestissimo"
 apt-install postgresql-client
 
 # Add bashrc addons for powerline and etc.
-echo -e "\n\n#Laravel bash adition\n" >> "$HOME/.bashrc"
+echo -e "\n\n# Laravel bash adition" >> "$HOME/.bashrc"
 cat /tmp/bashrc-additions.sh >> "$HOME/.bashrc"
 sudo rm /tmp/bashrc-additions.sh
+
+# Add aliases for php and composer.
+echo -e "\n\n# Laravel alias adition" >> "$HOME/.bash/aliases.sh"
+cat /tmp/alias-additions.sh >> "$HOME/.bash/aliases.sh"
+sudo rm /tmp/alias-additions.sh
 
 # Cleanups
 sudo apt-get purge software-properties-common -y

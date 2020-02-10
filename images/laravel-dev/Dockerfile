@@ -8,6 +8,7 @@ LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
 COPY ./composer.json "$HOME/.composer/composer.json"
 
 COPY ./bashrc-additions.sh /tmp/bashrc-additions.sh
+COPY ./alias-additions.sh /tmp/alias-additions.sh
 
 COPY ./build.sh /tmp/build.sh
 
