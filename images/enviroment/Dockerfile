@@ -2,6 +2,8 @@ ARG BASE_TAG=1.0-bionic
 
 FROM developsy/base:${BASE_TAG}
 
+LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
+
 ENV XDG_CONFIG_HOME "$HOME/.config"
 
 COPY ./powerline "$HOME/.config/powerline"

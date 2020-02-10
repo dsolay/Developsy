@@ -2,6 +2,8 @@ ARG ENVIROMENT_TAG=1.0-bionic
 
 FROM developsy/enviroment:${ENVIROMENT_TAG}
 
+LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
+
 # Add the composer.json
 COPY ./composer.json "$HOME/.composer/composer.json"
 

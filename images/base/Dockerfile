@@ -2,6 +2,8 @@ ARG UBUNTU_RELEASE=bionic
 
 FROM ubuntu:${UBUNTU_RELEASE}
 
+LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
+
 ARG UBUNTU_RELEASE
 
 ENV UBUNTU_RELEASE ${UBUNTU_RELEASE}
