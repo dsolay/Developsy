@@ -28,7 +28,8 @@ RUN . ${NVM_DIR}/nvm.sh && \
 	nvm alias default stable && \
     mkdir -p "$NPM_HOME/bin" "$HOME/.npm" && \
 	yarn global add javascript-typescript-langserver && \
-	yarn cache clean
+	yarn cache clean && \
+  . "$HOME/.bashrc"
 
 VOLUME $HOME/.npm
 
