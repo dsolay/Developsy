@@ -27,3 +27,12 @@ services:
             args:
                 - ENVIROMENT_TAG=${ENVIROMENT_TAG}
         image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
+
+    nodejs-dev:
+        build:
+            context: ./images/nodejs-dev
+            dockerfile: Dockerfile
+            args:
+                - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+                - NVM_VERSION=${NVM_VERSION}
+        image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
