@@ -22,7 +22,13 @@ export FZF_DEFAULT_OPTS='--color=light,hl:12,hl+:15,info:10,bg+:4'
 
 if [ "$(command -v fzf 2> /dev/null)" ]; then
 	[ -f ~/.bash/key-bindings.bash ] && . ~/.bash/key-bindings.bash
-	[ -f ~/.bash/fzf-completion.bash ] && bash ~/.bash/fzf-completion.bash
+	[ -f ~/.bash/fzf-completion.bash ] && . ~/.bash/fzf-completion.bash
+
+	# Load plugins
+	source ~/.bash/fzf-plugins/commons.plugin.bash
+	source ~/.bash/fzf-plugins/directory.plugin.bash
+	source ~/.bash/fzf-plugins/forgit.plugin.bash
+	source ~/.bash/fzf-plugins/tmux.plugin.bash
 fi
 
 # Utility to set "current working directory". For each new tab or window

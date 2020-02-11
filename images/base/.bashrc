@@ -43,17 +43,6 @@ if ! shopt -oq posix; then
 	[ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash 
 fi
 
-# if [ "$(command -v fzf 2> /dev/null)" ]; then
-# 	[ -f ~/.bash/key-bindings.bash ] && . ~/.bash/key-bindings.bash
-# 	[ -f ~/.bash/fzf-completion.bash ] && bash ~/.bash/fzf-completion.bash
-
-# 	# Load plugins
-# 	for plugin in $(ls -d ~/.bash/fzf-plugins/*)
-# 	do
-# 		source $plugin
-# 	done
-# fi
-
 # Enable tab completion when starting a command with 'sudo'
 [ "$PS1" ] && complete -cf sudo
 

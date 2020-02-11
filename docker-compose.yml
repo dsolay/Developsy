@@ -17,6 +17,7 @@ services:
             dockerfile: Dockerfile
             args:
                 - BASE_TAG=${BASE_TAG}
+                - TMUX_VERSION=${TMUX_VERSION}
         image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
 
     laravel-dev:

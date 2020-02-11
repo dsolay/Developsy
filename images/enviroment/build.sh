@@ -10,6 +10,10 @@ apt-install() {
 	sudo apt-get install --no-install-recommends -y "$@"
 }
 
+get() {
+  curl --continue-at - --location --progress-bar --remote-name --remote-time "$@"
+}
+
 install-tmux() {
 	local tmux_tar="tmux-$TMUX_VERSION.tar.gz"
 	pushd /tmp
@@ -66,16 +70,34 @@ install-neovim() {
 	sudo pip3 install neovim
 }
 
+install-powerline-font() {
+  pushd /tmp
+
+  apt-install fontconfig
+
+  # Install Inconsolata font
+  local FONT="Inconsolata"
+  get "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/$FONT.zip"
+  unzip "$FONT.zip"
+  sudo mv *.ttf /usr/share/fonts/truetype/
+  fc-cache -vf /usr/share/fonts/
+  
+  # Clean
+  rm -rf "$FONT.zip"
+  popd
+}
+
 sudo apt-get update
 
 # Fix file permissions from the copy
 sudo chown -R $USER:$USER "$HOME/.config"
-mkdir -p "$HOME/.cache" && sudo chown -R $USER:$USER "$HOME/.cache"
+sudo chown -R $USER:$USER "$HOME/.bash"
 sudo chown $USER:$USER /home/$USER/.tmux.conf
-# sudo chown $USER:$USER ~/.tmate.conf
 
 # Need to update package cache...
 sudo apt-get update
+
+install-powerline-font
 
 install-powerline
 
