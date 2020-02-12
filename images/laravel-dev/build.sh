@@ -47,6 +47,9 @@ composer global require "hirak/prestissimo"
 # Install postgres client
 apt-install postgresql-client
 
+# Install mysql client
+apt-install mysql-client
+
 # Add bashrc addons for powerline and etc.
 echo -e "\n\n# Laravel bash adition" >> "$HOME/.bashrc"
 cat /tmp/bashrc-additions.sh >> "$HOME/.bashrc"

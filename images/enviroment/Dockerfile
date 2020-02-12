@@ -25,4 +25,12 @@ COPY ./build.sh /tmp/build.sh
 RUN bash /tmp/build.sh && \
 	sudo rm /tmp/build.sh
 
+###########################################################################
+# Creating folder for volume extensions in dev container
+###########################################################################
+
+RUN mkdir -p /home/$USER/.vscode-server/extensions \
+    && chown -R $USER \
+        /home/$USER/.vscode-server
+
 CMD ["/bin/bash"]

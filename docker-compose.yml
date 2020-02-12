@@ -7,8 +7,10 @@ services:
             dockerfile: Dockerfile
             args:
                 - UBUNTU_RELEASE=${UBUNTU_RELEASE}
-                - USERNAME=${USERNAME}
+                - USER_CONTAINER=${USER_CONTAINER}
                 - TZ=${TIMEZONE}
+                - PUID=${PUID}
+                - PGID=${PGID}
         image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
 
     enviroment:

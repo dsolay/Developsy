@@ -18,21 +18,21 @@ ENV PUID ${PUID}
 ARG PGID=1000
 ENV PGID ${PGID}
 
-ARG USERNAME=dev
-ENV USERNAME ${USERNAME}
+ARG USER_CONTAINER=dev
+ENV USER_CONTAINER ${USER_CONTAINER}
 
 RUN set -xe; \
     apt-get update && \
     apt-get install sudo -y && \
-    groupadd -g ${PGID} ${USERNAME} && \
-    useradd -u ${PUID} -g ${USERNAME} -G sudo -m -s /bin/bash ${USERNAME} && \
+    groupadd -g ${PGID} ${USER_CONTAINER} && \
+    useradd -u ${PUID} -g ${USER_CONTAINER} -G sudo -m -s /bin/bash ${USER_CONTAINER} && \
     # Give passwordless sudo. This is only acceptable as it is a private
     # development environment not exposed to the outside world. Do NOT do this on
     # your host machine or otherwise.
-    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "${USER_CONTAINER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     # The sudo message is annoying, so skip it
-    touch /home/${USERNAME}/.sudo_as_admin_successful && \
-    chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.sudo_as_admin_successful && \
+    touch /home/${USER_CONTAINER}/.sudo_as_admin_successful && \
+    chown ${USER_CONTAINER}:${USER_CONTAINER} /home/${USER_CONTAINER}/.sudo_as_admin_successful && \
     apt-get autoremove -y && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
@@ -68,20 +68,20 @@ RUN bash /tmp/build.sh && \
 	rm /tmp/build.sh
 
 # For some reason, this environment variable isn't set by docker.
-ENV USER ${USERNAME}
+ENV USER ${USER_CONTAINER}
 
-ENV HOME /home/${USERNAME}
+ENV HOME /home/${USER}
 
 # This will determine where we will start when we enter the container.
-WORKDIR /home/${USERNAME}
+WORKDIR /home/${USER}
 
 # Set the user to be our newly created user by default.
-USER ${USERNAME}
+USER ${USER}
 
-COPY --chown=${USERNAME}:${USERNAME} ./inputrc "$HOME/.inputrc"
+COPY --chown=${USER}:${USER} ./inputrc "$HOME/.inputrc"
 
-COPY --chown=${USERNAME}:${USERNAME} ./.bash "$HOME/.bash"
+COPY --chown=${USER}:${USER} ./.bash "$HOME/.bash"
 
-COPY --chown=${USERNAME}:${USERNAME} ./.bashrc "$HOME/.bashrc"
+COPY --chown=${USER}:${USER} ./.bashrc "$HOME/.bashrc"
 
 CMD ["/bin/bash"]
