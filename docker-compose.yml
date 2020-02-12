@@ -38,3 +38,12 @@ services:
                 - ENVIROMENT_TAG=${ENVIROMENT_TAG}
                 - NVM_VERSION=${NVM_VERSION}
         image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
+
+    phpmyadmin:
+        build:
+            context: ./images/phpmyadmin-dev
+            dockerfile: Dockerfile
+            args:
+            - TZ=${TIMEZONE}
+            - PMA_VERSION=${PMA_VERSION}
+        image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
