@@ -17,18 +17,24 @@ COPY ./repl /usr/local/bin/repl
 ARG NVM_VERSION=v0.35.2
 ENV NVM_VERSION ${NVM_VERSION}
 
+ARG NODE_VERSION=v12.16.0
+ENV NODE_VERSION ${NODE_VERSION}
+
 ENV NPM_HOME $HOME/.npm-global
 ENV NVM_DIR $HOME/.nvm
 
+ENV NVM_BIN ${NVM_DIR}/versions/node/${NODE_VERSION}/bin
+
 RUN /tmp/build.sh && sudo rm /tmp/build.sh
 
-COPY --chown=$USER:$USER .nodejs-version $HOME/.nodejs-version
 RUN . ${NVM_DIR}/nvm.sh && \
-	nvm install "$(cat $HOME/.nodejs-version)" && \
+	nvm install ${NODE_VERSION} && \
 	nvm alias default stable && \
     mkdir -p "$NPM_HOME/bin" "$HOME/.npm" && \
 	yarn global add javascript-typescript-langserver && \
 	yarn cache clean
+
+ENV PATH $NVM_BIN:$PATH
 
 VOLUME $HOME/.npm
 

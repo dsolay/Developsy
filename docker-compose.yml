@@ -20,6 +20,8 @@ services:
             args:
                 - BASE_TAG=${BASE_TAG}
                 - TMUX_VERSION=${TMUX_VERSION}
+        depends_on:
+          - base
         image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
 
     laravel-dev:
@@ -28,6 +30,8 @@ services:
             dockerfile: Dockerfile
             args:
                 - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+        depends_on:
+          - enviroment
         image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
 
     nodejs-dev:
@@ -37,6 +41,8 @@ services:
             args:
                 - ENVIROMENT_TAG=${ENVIROMENT_TAG}
                 - NVM_VERSION=${NVM_VERSION}
+        depends_on:
+          - enviroment
         image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
 
     phpmyadmin:
@@ -46,4 +52,6 @@ services:
             args:
             - TZ=${TIMEZONE}
             - PMA_VERSION=${PMA_VERSION}
+        depends_on:
+          - enviroment
         image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache

@@ -71,19 +71,21 @@ install-neovim() {
 }
 
 install-powerline-font() {
-  pushd /tmp
-
-  apt-install fontconfig
-
-  # Install Inconsolata font
-  local FONT="Inconsolata"
-  get "https://github.com/ryanoasis/nerd-fonts/releases/download/v2.1.0/$FONT.zip"
-  unzip "$FONT.zip"
-  sudo mv *.ttf /usr/share/fonts/truetype/
-  fc-cache -vf /usr/share/fonts/
+	apt-install fontconfig
   
-  # Clean
-  rm -rf "$FONT.zip"
+	pushd /tmp
+
+  # clone
+  git clone https://github.com/powerline/fonts.git --depth=1
+  
+	# install
+  cd fonts
+  ./install.sh
+
+  # clean-up a bit
+  cd ..
+  rm -rf fonts
+
   popd
 }
 
