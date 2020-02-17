@@ -83,6 +83,9 @@ apt-install gpg gpg-agent
 # replacement for ifconfig
 apt-install iproute2
 
+# test open ports
+apt-install netcat
+
 # compressions tools
 apt-install zip unzip p7zip-full unrar
 
