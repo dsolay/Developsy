@@ -33,4 +33,11 @@ RUN mkdir -p /home/$USER/.vscode-server/extensions \
     && chown -R $USER \
         /home/$USER/.vscode-server
 
+###########################################################################
+# Creating folder for user bin
+###########################################################################
+
+RUN mkdir -p $HOME/bin
+ENV PATH $PATH:$HOME/bin
+
 CMD ["/bin/bash"]

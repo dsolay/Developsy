@@ -1,5 +1,5 @@
 " This file contains configurations which are specific to the plugins
-" loaded. Its in a seperate file since these need to be places after the 
+" loaded. Its in a seperate file since these need to be places after the
 " plug#end call.
 
 " Download a better colorscheme
@@ -61,3 +61,7 @@ Plug 'shumphrey/fugitive-gitlab.vim'
 
 " Automatically clear search highlight
 Plug 'junegunn/vim-slash'
+
+" Ident Lines
+Plug 'Yggdroot/indentLine'
+

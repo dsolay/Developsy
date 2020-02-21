@@ -45,6 +45,19 @@ services:
           - enviroment
         image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
 
+    java-dev:
+      build:
+          context: ./images/java-dev
+          dockerfile: Dockerfile
+          args:
+              - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+              - JDK_VERSION=${JDK_VERSION}
+              - MAVEN_VERSION=${MAVEN_VERSION}
+              - GRADLE_VERSION=${GRADLE_VERSION}
+      depends_on:
+        - enviroment
+      image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
+
     phpmyadmin:
         build:
             context: ./images/phpmyadmin-dev
@@ -53,7 +66,7 @@ services:
             - TZ=${TIMEZONE}
             - PMA_VERSION=${PMA_VERSION}
         image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
-    
+
     pgadmin:
         build:
             context: ./images/pgadmin-dev

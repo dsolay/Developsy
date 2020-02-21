@@ -10,7 +10,7 @@ cabbrev ldiffthis Linediff
 command Ldiffoff Linediffreset
 cabbrev ldiffoff LinediffReset
 
-" Load colors! On the initial install this will error out, so make it silent 
+" Load colors! On the initial install this will error out, so make it silent
 " so it installs without issues.
 silent! colorscheme gruvbox
 set background=dark
@@ -82,3 +82,8 @@ xmap <c-s> <Plug>SlimeRegionSend
 
 " Make it so that ctrlp ignores files in .gitignore
 let g:ctrlp_user_command = '(git status --short | awk "{ print \$2 }"; git ls-files -- %s) | sort -u'
+
+" No mostrar en ciertos tipos de buffers y archivos
+let g:indentLine_fileTypeExclude = ['text', 'sh', 'help', 'terminal']
+let g:indentLine_bufNameExclude = ['NERD_tree.*', 'term:.*']
+
