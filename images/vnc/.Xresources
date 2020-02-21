@@ -1,0 +1,128 @@
+!
+! ~/.Xresources
+!
+
+! Description
+! ===========
+!
+! This file is part of my dotfiles and is meant to work with the rest of
+! my custom desktop session: https://gitlab.com/protesilaos/dotfiles
+
+
+! Font settings (for programs that do not support fontconfig)
+! ===========================================================
+Xft*antialias: 1
+Xft*rgba: rgb
+Xft*autohint: 0
+Xft*hinting: 1
+Xft*hintstyle: hintfull
+Xft*lcdfilter: lcddefault
+
+! xterm
+! =====
+
+! Basic settings
+xterm*termName: xterm-256color
+xterm*locale: true
+xterm*utf8: 1
+xterm*utf8Fonts: always
+xterm*dynamicColors: true
+
+! UI components
+xterm*toolBar: false
+xterm*scrollBar: false
+xterm*geometry: 80x24
+xterm*internalBorder: 10
+
+! Cursor
+! Allowing the cursor to use the reverse colour of the background or
+! foreground avoids circumstances, such as in Vim, where the cursor can
+! be virtually impossible to see.  Note that this does not work when the
+! cursor is not a block character (cursorUnderLine: true).
+xterm*cursorColor: reverse
+xterm*cursorBlink: true
+xterm*cursorOffTime: 300
+xterm*cursorOnTime: 800
+xterm*cursorUnderLine: false
+xterm*pointerShape: XTerm
+
+! Bell
+xterm*bellIsUrgent: false
+xterm*bellSupressTime: 100
+xterm*marginBell: false
+xterm*visualBell: true
+
+! Text highlighting
+xterm*highlightColor: XtDefaultForeground
+xterm*highlightReverse: true
+xterm*highlightSelection: true
+xterm*highlightTextColor: XtDefaultBackground
+
+! Font settings
+!
+! The font settings address the issue discussed in this blog post:
+! https://protesilaos.com/codelog/2019-05-26-xterm-letter-pi-bug/
+!
+! Alternatively, just use Fira Code (apt install fonts-firacode) at any
+! integer size.  The font stack (comma separated) ensures that the next
+! font will be used if the one before is not available.  "Monospace" is
+! a fontconfig alias that ultimately points to "DejaVu Sans Mono" (see
+! my dotfiles fontconfig).
+xterm*faceName: Meslo LG M DZ Regular for Powerline:size=12:minspace=False
+xterm*faceSize: 9.5
+xterm*renderFont: true
+xterm*boldColors: false
+xterm*faceSize1: 8
+xterm*faceSize2: 12
+xterm*faceSize3: 15
+xterm*faceSize4: 18.25
+xterm*faceSize5: 20.5
+xterm*faceSize6: 25.5
+xterm*forceBoxChars: false
+xterm*limitFontsets: 5
+xterm*scaleHeight: 1.0
+
+! Scroll and output
+xterm*jumpScroll: true
+xterm*multiScroll: true
+xterm*saveLines: 9999
+xterm*scrollKey: true
+xterm*scrollTtyKeypress: true
+xterm*scrollTtyOutput: false
+
+! Backspace behaviour
+xterm*backarrowKey: false
+xterm*metaSendsEscape: true
+xterm*ttyModes: erase ^?
+
+! Key bindings.  Use C-S-{c,v} to copy/paste as in GNOME terminal.  The
+! keys "Prior" and "Next" represent PgUp and PgDown respectively.
+xterm*selectToClipboard: true
+xterm*translations: #override \n\
+	Ctrl Shift <KeyPress>C: select-end(SELECT, CLIPBOARD) \n\
+	Ctrl Shift <KeyPress>V: insert-selection(SELECT, CLIPBOARD) \n\
+	Ctrl Shift <KeyPress>Next: smaller-vt-font() \n\
+	Ctrl Shift <KeyPress>Prior: larger-vt-font() \n\
+	Ctrl Shift <KeyPress>Home: set-vt-font(d)
+
+! Theme: Tempus Warp
+! Description: Dark theme with a vibrant palette (WCAG AA compliant)
+! Author: Protesilaos Stavrou (https://protesilaos.com)
+xterm*background: #001514
+xterm*foreground: #a29fa0
+xterm*color0: #001514
+xterm*color1: #fa3333
+xterm*color2: #139913
+xterm*color3: #9e8100
+xterm*color4: #557feb
+xterm*color5: #d54cbf
+xterm*color6: #009580
+xterm*color7: #928080
+xterm*color8: #241828
+xterm*color9: #F0681A
+xterm*color10: #3aa73a
+xterm*color11: #ba8a00
+xterm*color12: #8887f0
+xterm*color13: #d85cf2
+xterm*color14: #1da1af
+xterm*color15: #a29fa0

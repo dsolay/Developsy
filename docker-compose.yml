@@ -1,77 +1,91 @@
 version: '3.7'
 
 services:
-    base:
-        build:
-            context: ./images/base
-            dockerfile: Dockerfile
-            args:
-                - UBUNTU_RELEASE=${UBUNTU_RELEASE}
-                - USER_CONTAINER=${USER_CONTAINER}
-                - TZ=${TIMEZONE}
-                - PUID=${PUID}
-                - PGID=${PGID}
-        image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
+  base:
+    build:
+      context: ./images/base
+      dockerfile: Dockerfile
+      args:
+        - UBUNTU_RELEASE=${UBUNTU_RELEASE}
+        - USER_CONTAINER=${USER_CONTAINER}
+        - TZ=${TIMEZONE}
+        - PUID=${PUID}
+        - PGID=${PGID}
+    image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
 
-    enviroment:
-        build:
-            context: ./images/enviroment
-            dockerfile: Dockerfile
-            args:
-                - BASE_TAG=${BASE_TAG}
-                - TMUX_VERSION=${TMUX_VERSION}
-        depends_on:
-          - base
-        image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
+  enviroment:
+    build:
+      context: ./images/enviroment
+      dockerfile: Dockerfile
+      args:
+        - BASE_TAG=${BASE_TAG}
+        - TMUX_VERSION=${TMUX_VERSION}
+    depends_on:
+      - base
+    image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
 
-    laravel-dev:
-        build:
-            context: ./images/laravel-dev
-            dockerfile: Dockerfile
-            args:
-                - ENVIROMENT_TAG=${ENVIROMENT_TAG}
-        depends_on:
-          - enviroment
-        image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
+  sandbox:
+    build:
+      context: ./images/vnc
+      dockerfile: Dockerfile
+      args:
+        - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+        - VNC_PASS=${VNC_PASS}
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    depends_on:
+      - base
+    image: ${COMPOSE_PROJECT_NAME}/vnc:1.0-${UBUNTU_RELEASE}
 
-    nodejs-dev:
-        build:
-            context: ./images/nodejs-dev
-            dockerfile: Dockerfile
-            args:
-                - ENVIROMENT_TAG=${ENVIROMENT_TAG}
-                - NVM_VERSION=${NVM_VERSION}
-        depends_on:
-          - enviroment
-        image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
-
-    java-dev:
+  laravel-dev:
       build:
-          context: ./images/java-dev
-          dockerfile: Dockerfile
-          args:
-              - ENVIROMENT_TAG=${ENVIROMENT_TAG}
-              - JDK_VERSION=${JDK_VERSION}
-              - MAVEN_VERSION=${MAVEN_VERSION}
-              - GRADLE_VERSION=${GRADLE_VERSION}
+        context: ./images/laravel-dev
+        dockerfile: Dockerfile
+        args:
+          - ENVIROMENT_TAG=${ENVIROMENT_TAG}
       depends_on:
         - enviroment
-      image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
+      image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
 
-    phpmyadmin:
-        build:
-            context: ./images/phpmyadmin-dev
-            dockerfile: Dockerfile
-            args:
-            - TZ=${TIMEZONE}
-            - PMA_VERSION=${PMA_VERSION}
-        image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
+  nodejs-dev:
+    build:
+      context: ./images/nodejs-dev
+      dockerfile: Dockerfile
+      args:
+        - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+        - NVM_VERSION=${NVM_VERSION}
+    depends_on:
+      - enviroment
+    image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
 
-    pgadmin:
-        build:
-            context: ./images/pgadmin-dev
-            dockerfile: Dockerfile
-            args:
-            - TZ=${TIMEZONE}
-            - PGADMIN_VERSION=${PGADMIN_VERSION}
-        image: ${COMPOSE_PROJECT_NAME}/pgadmin-dev:${PGADMIN_VERSION}
+  java-dev:
+    build:
+      context: ./images/java-dev
+      dockerfile: Dockerfile
+      args:
+        - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+        - JDK_VERSION=${JDK_VERSION}
+        - MAVEN_VERSION=${MAVEN_VERSION}
+        - GRADLE_VERSION=${GRADLE_VERSION}
+    depends_on:
+      - enviroment
+    image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
+
+  phpmyadmin:
+    build:
+      context: ./images/phpmyadmin-dev
+      dockerfile: Dockerfile
+      args:
+      - TZ=${TIMEZONE}
+      - PMA_VERSION=${PMA_VERSION}
+    image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
+
+  pgadmin:
+    build:
+      context: ./images/pgadmin-dev
+      dockerfile: Dockerfile
+      args:
+      - TZ=${TIMEZONE}
+      - PGADMIN_VERSION=${PGADMIN_VERSION}
+    image: ${COMPOSE_PROJECT_NAME}/pgadmin-dev:${PGADMIN_VERSION}
