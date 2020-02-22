@@ -38,6 +38,20 @@ services:
       - base
     image: ${COMPOSE_PROJECT_NAME}/vnc:1.0-${UBUNTU_RELEASE}
 
+  base-android:
+    build:
+      context: ./images/base-android
+      dockerfile: Dockerfile
+      args:
+        - JAVA_TAG=${JAVA_TAG}
+        - JDK_VERSION=${JDK_VERSION}
+        - GRADLE_VERSION=${GRADLE_VERSION}
+        - VNC_TAG=${VNC_TAG}
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: ${COMPOSE_PROJECT_NAME}/base-android:sdk
+
   laravel-dev:
       build:
         context: ./images/laravel-dev
