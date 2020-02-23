@@ -1,21 +1,12 @@
-ARG JAVA_TAG=1.0-bionic
 ARG VNC_TAG=1.0-bionic
-
-FROM developsy/java-dev:${JAVA_TAG} as java
 
 FROM developsy/vnc:${VNC_TAG} as vncserver
 
 LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
 
 ARG JDK_VERSION=8
-ARG GRADLE_VERSION=6.2
-ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
 
 SHELL ["/bin/bash", "-c"]
-
-# copy gradle
-COPY --from=java $GRADLE_HOME $GRADLE_HOME
-COPY --from=java /opt/gradlew /opt/gradlew
 
 RUN set -ex; \
   sudo apt-get update && \
@@ -46,6 +37,24 @@ RUN set -ex; \
 
 ENV JAVA_HOME /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
 
+# Install Gradle
+
+ARG GRADLE_VERSION=6.2
+
+RUN set -ex; \
+  curl -L -o /tmp/gradle.zip https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip && \
+  sudo mkdir -p /opt/gradle && \
+  sudo unzip -d /opt/gradle/ /tmp/gradle.zip && \
+  rm -rf /tmp/gradle.zip
+
+ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
+
+# Gradle wrapper
+RUN set -ex; \
+  sudo mkdir -p /opt/gradlew && \
+  sudo $GRADLE_HOME/bin/gradle wrapper --gradle-version $GRADLE_VERSION --distribution-type all -p /opt/gradlew
+
+# install android sdk tools
 ARG SKD=4333796
 
 RUN set -ex; \
