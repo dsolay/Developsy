@@ -37,6 +37,8 @@ services:
     depends_on:
       - base
     image: ${COMPOSE_PROJECT_NAME}/vnc:1.0-${UBUNTU_RELEASE}
+    ports:
+      - "5920:5920"
 
   base-android:
     build:
@@ -47,10 +49,30 @@ services:
         - JDK_VERSION=${JDK_VERSION}
         - GRADLE_VERSION=${GRADLE_VERSION}
         - VNC_TAG=${VNC_TAG}
+        - SKD=${SKD}
         - http_proxy
         - https_proxy
         - no_proxy
     image: ${COMPOSE_PROJECT_NAME}/base-android:sdk
+
+  android-emulator:
+    build:
+      context: ./images/android-emulator
+      dockerfile: Dockerfile
+      args:
+        - ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
+        - ANDROID_BUILD_TOOLS_LEVEL=${ANDROID_BUILD_TOOLS_LEVEL}
+        - EMULATOR_NAME=${EMULATOR_NAME}
+        - ARCH=${ARCH}
+    image: ${COMPOSE_PROJECT_NAME}/android-emulator:api${ANDROID_API_LEVEL}
+    hostname: android-emulator
+    devices:
+      - "/dev/kvm:/dev/kvm"
+    ports:
+      - "5037:5037"
+      - "5554:5554"
+      - "5555:5555"
+      - "5900:5900"
 
   laravel-dev:
       build:
