@@ -13,13 +13,6 @@ ENV GRADLE_HOME /opt/gradle/gradle-${GRADLE_VERSION}
 
 SHELL ["/bin/bash", "-c"]
 
-# copy java
-COPY --from=java /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64 /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
-COPY --from=java /usr/share/java /usr/share/java
-COPY --from=java /usr/share/man/man1/java.1.gz /usr/share/man/man1/java.1.gz
-
-ENV JAVA_HOME /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
-
 # copy gradle
 COPY --from=java $GRADLE_HOME $GRADLE_HOME
 COPY --from=java /opt/gradlew /opt/gradlew
@@ -42,20 +35,33 @@ RUN set -ex; \
     qemu-kvm \
     libvirt-bin \
     bridge-utils \
-    kmod && \
+    kmod \
+    openjdk-${JDK_VERSION}-jdk \
+    lib32ncurses5 \
+    lib32stdc++6 && \
   sudo apt-get autoremove -y && \
   sudo apt-get clean && \
-  sudo rm -rf /var/lib/apt/lists/*
+  sudo rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk${JDK_VERSION}-installer
+
+ENV JAVA_HOME /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
+
+ARG SKD=4333796
 
 RUN set -ex; \
-  curl -L -o /tmp/sdk-tools.zip 'https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip' && \
+  curl -L -o /tmp/sdk-tools.zip https://dl.google.com/android/repository/sdk-tools-linux-${SKD}.zip && \
   sudo unzip -d /opt/android /tmp/sdk-tools.zip && \
   sudo chmod -R +x /opt/android/tools/bin && \
-  rm -rf /tmp/sdk-tools.zip
+  rm -rf /tmp/sdk-tools.zip && \
+  /opt/android/tools/bin/sdkmanager --update && \
+  yes Y | /opt/android/tools/bin/sdkmanager --licenses && \
+  yes Y | sudo /opt/android/tools/bin/sdkmanager --install \
+    "platform-tools" \
+    "emulator"
 
 ENV ANDROID_HOME=/opt/android
 
-ENV PATH "$PATH:$JAVA_HOME/bin:$GRADLE_HOME/bin:/opt/gradlew:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools"
+ENV PATH "$PATH:$GRADLE_HOME/bin:/opt/gradlew:$ANDROID_HOME/emulator:$ANDROID_HOME/tools/bin:$ANDROID_HOME/platform-tools"
 ENV LD_LIBRARY_PATH "$ANDROID_HOME/emulator/lib64:$ANDROID_HOME/emulator/lib64/qt/lib"
 
 CMD ["/bin/bash"]
