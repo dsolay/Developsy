@@ -45,7 +45,6 @@ services:
       context: ./images/base-android
       dockerfile: Dockerfile
       args:
-        - JAVA_TAG=${JAVA_TAG}
         - JDK_VERSION=${JDK_VERSION}
         - GRADLE_VERSION=${GRADLE_VERSION}
         - VNC_TAG=${VNC_TAG}
@@ -73,6 +72,17 @@ services:
       - "5554:5554"
       - "5555:5555"
       - "5900:5900"
+
+  flutter-dev:
+    build:
+      context: ./images/flutter-dev
+      dockerfile: Dockerfile
+      args:
+        - ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
+        - FLUTTER_VERSION=${FLUTTER_VERSION}
+    depends_on:
+      - android-emulator
+    image: ${COMPOSE_PROJECT_NAME}/flutter-dev:${FLUTTER_TAG}
 
   laravel-dev:
       build:

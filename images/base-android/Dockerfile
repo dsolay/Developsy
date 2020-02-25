@@ -11,8 +11,7 @@ SHELL ["/bin/bash", "-c"]
 RUN set -ex; \
   sudo apt-get update && \
   sudo apt-get install --no-install-recommends -y \
-    libglu1 \
-    libpulse-dev \
+    libglu1-mesa \
     libc6  \
     libstdc++6 \
     libx11-6 \
@@ -27,7 +26,7 @@ RUN set -ex; \
     libvirt-bin \
     bridge-utils \
     kmod \
-    openjdk-${JDK_VERSION}-jdk \
+    openjdk-${JDK_VERSION}-jdk-headless \
     lib32ncurses5 \
     lib32stdc++6 && \
   sudo apt-get autoremove -y && \
@@ -63,7 +62,8 @@ RUN set -ex; \
   sudo chmod -R +x /opt/android/tools/bin && \
   rm -rf /tmp/sdk-tools.zip && \
   /opt/android/tools/bin/sdkmanager --update && \
-  yes Y | /opt/android/tools/bin/sdkmanager --licenses && \
+  touch $HOME/.android/repositories.cfg && \
+  yes Y | sudo /opt/android/tools/bin/sdkmanager --licenses && \
   yes Y | sudo /opt/android/tools/bin/sdkmanager --install \
     "platform-tools" \
     "emulator"
