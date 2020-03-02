@@ -34,7 +34,10 @@ RUN . ${NVM_DIR}/nvm.sh && \
 	yarn global add javascript-typescript-langserver && \
 	yarn cache clean
 
-ENV PATH $NVM_BIN:$PATH
+ENV PATH $PATH:${NVM_DIR}/versions/node/${NODE_VERSION}/bin:$NPM_HOME/bin:$HOME/.yarn/bin
+
+# install some frotend framework
+RUN npm install -g @vue/cli
 
 VOLUME $HOME/.npm
 

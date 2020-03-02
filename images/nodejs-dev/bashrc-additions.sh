@@ -5,12 +5,6 @@ export FZF_CTRL_T_COMMAND="command find -L . \\( -path '*/\\.*' -o -fstype 'dev'
     -o -type d -print \
     -o -type l -print 2> /tmp/fzf.err | sed 1d | cut -b3-"
 
-# Include npm package globally to path
-[ -d "$NPM_HOME/bin" ] && appendpath "$NPM_HOME/bin"
-
-# Add yarn global installs to the path.
-[ -d "$HOME/.yarn/bin" ] && appendpath "$HOME/.yarn/bin"
-
 #
 # eThis alias would search 'up' from your current directory in order to detect a .nvmrc file.
 # If it finds it, it will switch to that version; if not, it will use the default version.

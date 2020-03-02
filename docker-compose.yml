@@ -11,6 +11,9 @@ services:
         - TZ=${TIMEZONE}
         - PUID=${PUID}
         - PGID=${PGID}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
 
   enviroment:
@@ -20,6 +23,9 @@ services:
       args:
         - BASE_TAG=${BASE_TAG}
         - TMUX_VERSION=${TMUX_VERSION}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     depends_on:
       - base
     image: ${COMPOSE_PROJECT_NAME}/enviroment:1.0-${UBUNTU_RELEASE}
@@ -63,6 +69,9 @@ services:
         - ANDROID_BUILD_TOOLS_LEVEL=${ANDROID_BUILD_TOOLS_LEVEL}
         - EMULATOR_NAME=${EMULATOR_NAME}
         - ARCH=${ARCH}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     image: ${COMPOSE_PROJECT_NAME}/android-emulator:api${ANDROID_API_LEVEL}
     hostname: android-emulator
     devices:
@@ -80,6 +89,9 @@ services:
       args:
         - ANDROID_API_LEVEL=${ANDROID_API_LEVEL}
         - FLUTTER_VERSION=${FLUTTER_VERSION}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     depends_on:
       - android-emulator
     image: ${COMPOSE_PROJECT_NAME}/flutter-dev:${FLUTTER_TAG}
@@ -90,6 +102,9 @@ services:
         dockerfile: Dockerfile
         args:
           - ENVIROMENT_TAG=${ENVIROMENT_TAG}
+          - http_proxy
+          - https_proxy
+          - no_proxy
       depends_on:
         - enviroment
       image: ${COMPOSE_PROJECT_NAME}/laravel-dev:1.0-${UBUNTU_RELEASE}
@@ -101,6 +116,9 @@ services:
       args:
         - ENVIROMENT_TAG=${ENVIROMENT_TAG}
         - NVM_VERSION=${NVM_VERSION}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     depends_on:
       - enviroment
     image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
@@ -114,6 +132,9 @@ services:
         - JDK_VERSION=${JDK_VERSION}
         - MAVEN_VERSION=${MAVEN_VERSION}
         - GRADLE_VERSION=${GRADLE_VERSION}
+        - http_proxy
+        - https_proxy
+        - no_proxy
     depends_on:
       - enviroment
     image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
@@ -125,6 +146,9 @@ services:
       args:
       - TZ=${TIMEZONE}
       - PMA_VERSION=${PMA_VERSION}
+      - http_proxy
+      - https_proxy
+      - no_proxy
     image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
 
   pgadmin:
@@ -134,4 +158,7 @@ services:
       args:
       - TZ=${TIMEZONE}
       - PGADMIN_VERSION=${PGADMIN_VERSION}
+      - http_proxy
+      - https_proxy
+      - no_proxy
     image: ${COMPOSE_PROJECT_NAME}/pgadmin-dev:${PGADMIN_VERSION}

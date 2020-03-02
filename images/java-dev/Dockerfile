@@ -12,7 +12,8 @@ RUN set -ex; \
   sudo apt-get install --no-install-recommends -y openjdk-${JDK_VERSION}-jdk && \
   sudo apt-get autoremove -y && \
   sudo apt-get clean && \
-  sudo rm -rf /var/lib/apt/lists/*
+  sudo rm -rf /var/lib/apt/lists/* && \
+  rm -rf /var/cache/oracle-jdk${JDK_VERSION}-installer
 
 ENV JAVA_HOME /usr/lib/jvm/java-${JDK_VERSION}-openjdk-amd64
 
