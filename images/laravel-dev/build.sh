@@ -26,7 +26,8 @@ install-php() {
         php7.4-imap \
         php7.4-xml \
         php7.4-zip \
-        php7.4-pgsql
+        php7.4-pgsql \
+        php7.4-sqlite3
 }
 sudo apt-get update
 
@@ -49,6 +50,9 @@ apt-install postgresql-client
 
 # Install mysql client
 apt-install mysql-client
+
+# Install sqlite3
+apt-install sqlite3
 
 # Add bashrc addons for powerline and etc.
 echo -e "\n\n# Laravel bash adition" >> "$HOME/.bashrc"

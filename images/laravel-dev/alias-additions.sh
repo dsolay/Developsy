@@ -10,7 +10,7 @@ alias refresh="php artisan migrate:refresh"
 alias rollback="php artisan migrate:rollback"
 alias seed="php artisan db:seed"
 alias serve="php artisan serve --quiet &"
-alias cache:clear="php artisan route:clear && php artisan config:clear && php artisan config:cache"
+alias cache:clear="php artisan route:clear && php artisan config:clear && php artisan config:cache && php artisan cache:clear"
 alias route:list="php artisan route:list"
 
 alias phpunit="./vendor/bin/phpunit"
