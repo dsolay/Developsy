@@ -13,12 +13,12 @@ ARG ARCH=x86
 ENV EMULATOR_NAME ${EMULATOR_NAME}
 
 RUN set -ex; \
+  sudo sdkmanager --update  && \
   yes Y | sudo sdkmanager --install \
     "system-images;android-${ANDROID_API_LEVEL};${ANDROID_IMAGE};${ARCH}" \
     "platforms;android-${ANDROID_API_LEVEL}" \
-    "build-tools;${ANDROID_BUILD_TOOLS_LEVEL}"
-
-RUN echo "no" | avdmanager --verbose create avd --force \
+    "build-tools;${ANDROID_BUILD_TOOLS_LEVEL}" && \
+    echo "no" | avdmanager --verbose create avd --force \
     --name "${EMULATOR_NAME}" \
     --device "pixel" \
     --package "system-images;android-${ANDROID_API_LEVEL};${ANDROID_IMAGE};${ARCH}" \
