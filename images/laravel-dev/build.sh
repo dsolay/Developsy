@@ -15,19 +15,20 @@ install-php() {
     sudo add-apt-repository ppa:ondrej/php
     sudo apt-get update
     apt-install \
-        php7.4-common \
-        php7.4-cli \
-        php7.4-gd \
-        php7.4-mysql \
-        php7.4-curl \
-        php7.4-intl \
-        php7.4-mbstring \
-        php7.4-bcmath \
-        php7.4-imap \
-        php7.4-xml \
-        php7.4-zip \
-        php7.4-pgsql \
-        php7.4-sqlite3
+        php${PHP_VERSION}-common \
+        php${PHP_VERSION}-cli \
+        php${PHP_VERSION}-gd \
+        php${PHP_VERSION}-mysql \
+        php${PHP_VERSION}-curl \
+        php${PHP_VERSION}-intl \
+        php${PHP_VERSION}-mbstring \
+        php${PHP_VERSION}-bcmath \
+        php${PHP_VERSION}-imap \
+        php${PHP_VERSION}-xml \
+        php${PHP_VERSION}-zip \
+        php${PHP_VERSION}-pgsql \
+        php${PHP_VERSION}-sqlite3 \
+        php${PHP_VERSION}-xdebug
 }
 sudo apt-get update
 
@@ -63,6 +64,11 @@ sudo rm /tmp/bashrc-additions.sh
 echo -e "\n\n# Laravel alias adition" >> "$HOME/.bash/aliases.sh"
 cat /tmp/alias-additions.sh >> "$HOME/.bash/aliases.sh"
 sudo rm /tmp/alias-additions.sh
+
+# Setup docker host
+IP=$(ip -4 route list match 0/0 | awk '{print $3}')
+echo "Host ip is $IP"
+echo "$IP   host.docker.internal" | sudo tee -a /etc/hosts
 
 # Cleanups
 sudo apt-get purge software-properties-common -y
