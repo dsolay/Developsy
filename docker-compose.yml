@@ -143,27 +143,3 @@ services:
     depends_on:
       - enviroment
     image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
-
-  phpmyadmin:
-    build:
-      context: ./images/phpmyadmin-dev
-      dockerfile: Dockerfile
-      args:
-      - TZ=${TIMEZONE}
-      - PMA_VERSION=${PMA_VERSION}
-      - http_proxy
-      - https_proxy
-      - no_proxy
-    image: ${COMPOSE_PROJECT_NAME}/phpmyadmin-dev:php7.4-apache
-
-  pgadmin:
-    build:
-      context: ./images/pgadmin-dev
-      dockerfile: Dockerfile
-      args:
-      - TZ=${TIMEZONE}
-      - PGADMIN_VERSION=${PGADMIN_VERSION}
-      - http_proxy
-      - https_proxy
-      - no_proxy
-    image: ${COMPOSE_PROJECT_NAME}/pgadmin-dev:${PGADMIN_VERSION}
