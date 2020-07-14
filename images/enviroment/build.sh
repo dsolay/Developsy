@@ -72,12 +72,12 @@ install-neovim() {
 
 install-powerline-font() {
 	apt-install fontconfig
-  
+
 	pushd /tmp
 
   # clone
   git clone https://github.com/powerline/fonts.git --depth=1
-  
+
 	# install
   cd fonts
   ./install.sh
@@ -89,15 +89,13 @@ install-powerline-font() {
   popd
 }
 
+# Need to update package cache...
 sudo apt-get update
 
 # Fix file permissions from the copy
 sudo chown -R $USER:$USER "$HOME/.config"
 sudo chown -R $USER:$USER "$HOME/.bash"
 sudo chown $USER:$USER /home/$USER/.tmux.conf
-
-# Need to update package cache...
-sudo apt-get update
 
 install-powerline-font
 
