@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+
+_checkexec() {
+  command -v "$1" >/dev/null
+}
+
+function install_plugin() {
+  mkdir -p ~/.local/share/nvim/site/pack/coc/start
+  pushd ~/.local/share/nvim/site/pack/coc/start
+  curl --fail -L https://github.com/neoclide/coc.nvim/archive/release.tar.gz | tar xzfv -
+  popd
+}
+
+function install_extensions() {
+  mkdir -p ~/.config/coc/extensions
+  pushd ~/.config/coc/extensions
+
+  if [ ! -f package.json ]; then
+    echo '{"dependencies":{}}' >package.json
+  fi
+
+  npm install $1 --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod
+
+  popd
+}
+
+function clear_apt() {
+  sudo apt-get autoremove -y
+  sudo apt-get clean
+  sudo rm -rf /var/lib/apt/lists/*
+}
+
+# Define required options
+while [[ -n "$1" ]]; do
+  case "$1" in
+  --plugin)
+    _checkexec node || _checkexec npm || sudo apt-get update && sudo apt-get install --no-install-recommends -y nodejs npm
+    clear_apt
+    install_plugin
+    ;;
+  --extensions)
+    # Check option value
+    if ! [[ -z "$2" ]]; then
+      install_extensions "$2"
+    else
+      echo
+      echo "[x] Error: Value for option $1 is required!"
+      echo
+      exit
+    fi
+    shift
+    ;;
+  *)
+    echo
+    echo "[x] Error: Unknown option $1 with value $2..."
+    echo
+    exit 1
+    clear
+    shift
+    ;;
+  esac
+  shift
+done

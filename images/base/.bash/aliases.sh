@@ -94,3 +94,6 @@ alias diff='diff --color=auto'
 
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
+
+# neovim
+alias vim='nvim'

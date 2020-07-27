@@ -40,7 +40,7 @@ export PS2="> "
 # it's already enabled in /etc/bash.bashrc and /etc/profile sources
 # /etc/bash.bashrc).
 if ! shopt -oq posix; then
-	[ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash 
+	[ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash
 fi
 
 # Enable tab completion when starting a command with 'sudo'
@@ -76,6 +76,29 @@ _checkexec lesspipe && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Load functions
 [ -f ~/.bash/funcs.sh ] && . ~/.bash/funcs.sh
+
+# Powerline configuration
+if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
+  powerline-daemon -q
+  POWERLINE_BASH_CONTINUATION=1
+  POWERLINE_BASH_SELECT=1
+  source /usr/share/powerline/bindings/bash/powerline.sh
+fi
+
+export FZF_DEFAULT_OPTS='--color=light,hl:12,hl+:15,info:10,bg+:4'
+
+if [ "$(command -v fzf 2> /dev/null)" ]; then
+	[ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash
+	[ -f ~/.bash/fzf/fzf-completion.bash ] && . ~/.bash/fzf/fzf-completion.bash
+
+	# Load plugins
+	source ~/.bash/fzf/fzf-plugins/commons.plugin.bash
+	source ~/.bash/fzf/fzf-plugins/directory.plugin.bash
+	source ~/.bash/fzf/fzf-plugins/forgit.plugin.bash
+	source ~/.bash/fzf/fzf-plugins/tmux.plugin.bash
+fi
+
+fbind -c
 
 # gpg
 export GNUPGHOME="~/.gnupg/"

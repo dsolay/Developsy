@@ -34,10 +34,15 @@ let g:airline#extensions#tabline#buffer_nr_show = 1
 " strip out extraneous info.
 let g:airline#extensions#tabline#fnamemod = ':t'
 
+" disables the buffer name that displays on the right of the tabline
+let g:airline#extensions#tabline#show_splits = 0
+
 " Set the theme for vim-airline
 autocmd VimEnter * AirlineTheme gruvbox
 
 let g:NERDTreeMouseMode = 3
+
+let g:NERDTreeGitStatusShowIgnored = 1
 
 " Use spaces instead just for yaml
 autocmd Filetype yaml setl expandtab
@@ -46,15 +51,22 @@ autocmd Filetype yaml setl expandtab
 let g:ale_set_highlights = 0
 
 " I want errors to be styled a bit more like neomake
-let g:ale_sign_error = '✖'
+let g:ale_sign_error = '✘'
 highlight ALEErrorSign ctermfg=DarkRed ctermbg=NONE
 
 " Same with warnings
-let g:ale_sign_warning = '⚠'
+let g:ale_sign_warning = '◉'
 highlight ALEWarningSign ctermfg=Yellow ctermbg=NONE
 
-" Force the emoji to show up in the completion dropdown
-let g:github_complete_emoji_force_available = 1
+" disable linting while typing
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 0
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+let g:ale_open_list = 1
+let g:ale_keep_list_window_open=0
+let g:ale_set_quickfix=0
+let g:ale_list_window_size = 5
+let g:ale_fix_on_save = 1
 
 " Rely on tmux for the repl integration to work
 let g:slime_target = 'tmux'
@@ -72,13 +84,13 @@ if exists("$TMUX")
 endif
 
 " I dont like the default mappings of this plugin...
-let g:slime_no_mappings = 1
+" let g:slime_no_mappings = 1
 
 " Ctrl+s will send the paragraph over to the repl.
-nmap <c-s> <Plug>SlimeLineSend
+" nmap <c-s> <Plug>SlimeLineSend
 
 " Ctrl+x will send the highlighted section over to the repl.
-xmap <c-s> <Plug>SlimeRegionSend
+" xmap <c-s> <Plug>SlimeRegionSend
 
 " Make it so that ctrlp ignores files in .gitignore
 let g:ctrlp_user_command = '(git status --short | awk "{ print \$2 }"; git ls-files -- %s) | sort -u'
@@ -86,4 +98,3 @@ let g:ctrlp_user_command = '(git status --short | awk "{ print \$2 }"; git ls-fi
 " No mostrar en ciertos tipos de buffers y archivos
 let g:indentLine_fileTypeExclude = ['text', 'sh', 'help', 'terminal']
 let g:indentLine_bufNameExclude = ['NERD_tree.*', 'term:.*']
-
