@@ -86,9 +86,9 @@ services:
       - android-emulator
     image: ${COMPOSE_PROJECT_NAME}/flutter-dev:${FLUTTER_TAG}
 
-  php-dev:
+  laravel-dev:
       build:
-        context: ./images/php-dev
+        context: ./images/laravel-dev
         dockerfile: Dockerfile
         args:
           - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
@@ -97,7 +97,7 @@ services:
           - no_proxy
       depends_on:
         - base
-      image: ${COMPOSE_PROJECT_NAME}/php-dev:base-1.0
+      image: ${COMPOSE_PROJECT_NAME}/laravel-dev:base-1.0
 
   nodejs-dev:
     build:
