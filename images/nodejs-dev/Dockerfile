@@ -1,46 +1,51 @@
-ARG ENVIROMENT_TAG=1.0-bionic
+ARG DEVELOPSY_BASE_TAG=1.0-focal
 
-FROM developsy/enviroment:${ENVIROMENT_TAG}
+FROM developsy/base:${DEVELOPSY_BASE_TAG}
 
 LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
 
-COPY ./bashrc-additions.sh /tmp/bashrc-additions.sh
+ARG NVM_VERSION=V0.35.3
+ARG NODE_VERSION=v14.7.0
 
-COPY ./build.sh /tmp/build.sh
-
-COPY ./plugin.vim /tmp/plugin.vim
-
-COPY ./post-pluggin.vim /tmp/post-plugin.vim
-
-COPY ./repl /usr/local/bin/repl
-
-ARG NVM_VERSION=v0.35.2
-ENV NVM_VERSION ${NVM_VERSION}
-
-ARG NODE_VERSION=v12.16.0
-ENV NODE_VERSION ${NODE_VERSION}
-
-ENV NPM_HOME $HOME/.npm-global
 ENV NVM_DIR $HOME/.nvm
-
-ENV NVM_BIN ${NVM_DIR}/versions/node/${NODE_VERSION}/bin
-
-RUN /tmp/build.sh && sudo rm /tmp/build.sh
-
-RUN . ${NVM_DIR}/nvm.sh && \
-	nvm install ${NODE_VERSION} && \
-	nvm alias default stable && \
-    mkdir -p "$NPM_HOME/bin" "$HOME/.npm" && \
-	yarn global add javascript-typescript-langserver && \
-	yarn cache clean
-
+ENV NPM_HOME $HOME/.npm-global
 ENV PATH $PATH:${NVM_DIR}/versions/node/${NODE_VERSION}/bin:$NPM_HOME/bin:$HOME/.yarn/bin
 
-# install some frotend framework
-RUN npm install -g @vue/cli
+RUN set -ex; \
+	# installing yarn
+	curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add - \
+	&& echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list \
+	&& sudo apt update \
+	&& sudo apt-get install --no-install-recommends -y yarn \
+	# intalling node version manager
+	&& mkdir -p $NVM_DIR \
+	&& curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash \
+  && . $NVM_DIR/nvm.sh \
+	&& nvm install $NODE_VERSION \
+	# intalling vue
+	&& npm install -g @vue/cli \
+	# installing
+	&& pip3 install --user pynvim \
+  && coc-install --plugin --extensions "coc-snippets coc-yaml coc-docker coc-json coc-vetur coc-tsserver coc-eslint coc-prettier coc-css coc-sh" \
+	# clean
+	&& sudo apt-get autoremove -y \
+	&& sudo apt-get clean \
+	&& sudo rm -rf /var/lib/apt/lists/*
 
-VOLUME $HOME/.npm
 
-VOLUME $HOME/.cache/yarn
+COPY nvim /tmp/nvim
+COPY bashrc-additions.sh /tmp/bashrc-additions.sh
+
+RUN set -ex; \
+ cat /tmp/nvim/plugin.vim >> $HOME/.config/nvim/plugin.vim \
+ && nvim +PlugInstall +qall \
+ && cat /tmp/nvim/post-plugin.vim >> $HOME/.config/nvim/post-plugin.vim \
+ && sudo rm -rf /tmp/nvim \
+ && cat /tmp/bashrc-additions.sh >> $HOME/.bashrc \
+ && sudo rm -rf /tmp/bashrc-additions.sh
+
+COPY nvim/coc-settings.json $HOME/.config/nvim/coc-settings.json
+
+VOLUME [ "$HOME/.npm", "$HOME/.cache/yarn" ]
 
 CMD ["/bin/bash"]

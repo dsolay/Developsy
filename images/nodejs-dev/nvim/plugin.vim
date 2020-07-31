@@ -1,9 +1,6 @@
 " Better syntax support for js
 Plug 'jelera/vim-javascript-syntax'
 
-" Dust.js support
-Plug 'jimmyhchan/dustjs.vim'
-
 " Syntax support for editing markdown files.
 Plug 'tpope/vim-markdown'
 
@@ -25,3 +22,4 @@ Plug 'nikvdp/ejs-syntax'
 
 " typescript support
 Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
