@@ -87,14 +87,16 @@ endif
 " let g:slime_no_mappings = 1
 
 " Ctrl+s will send the paragraph over to the repl.
-" nmap <c-s> <Plug>SlimeLineSend
+nmap <Leader><C-s> <Plug>SlimeLineSend
 
 " Ctrl+x will send the highlighted section over to the repl.
-" xmap <c-s> <Plug>SlimeRegionSend
+xmap <Leader><C-s> <Plug>SlimeRegionSend
 
 " Make it so that ctrlp ignores files in .gitignore
 let g:ctrlp_user_command = '(git status --short | awk "{ print \$2 }"; git ls-files -- %s) | sort -u'
 
-" No mostrar en ciertos tipos de buffers y archivos
-let g:indentLine_fileTypeExclude = ['text', 'sh', 'help', 'terminal']
-let g:indentLine_bufNameExclude = ['NERD_tree.*', 'term:.*']
+"
+" ~~ Vim doge ~~
+"
+noremap <Leader>dg :DogeGenerate
+noremap <Leader>qdg :DogeGenerate<CR>

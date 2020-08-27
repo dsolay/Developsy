@@ -50,8 +50,11 @@ Plug 'junegunn/vim-slash'
 " Toggle comments
 Plug 'preservim/nerdcommenter'
 
-" Debug tool
-Plug 'vim-vdebug/vdebug'
-
 " shows a git diff in the sign column
 Plug 'airblade/vim-gitgutter'
+
+" Editorconfig
+Plug 'editorconfig/editorconfig-vim'
+
+" Documentation generator
+Plug 'kkoomen/vim-doge'

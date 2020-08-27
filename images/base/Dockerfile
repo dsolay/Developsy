@@ -31,6 +31,7 @@ RUN set -ex; \
 		curl \
 		wget \
 		bc \
+    ripgrep \
 		xclip \
 		man-db \
 		htop \

@@ -87,6 +87,9 @@ let mapleader = ","
 " Save changes
 inoremap <C-s> <Esc>:w<CR>i
 
+" Select all
+nnoremap <C-A> ggVG
+
 " Go to the nth tabpage
 nnoremap <A-F1> 1gt
 nnoremap <A-F2> 2gt
@@ -100,18 +103,18 @@ nnoremap <A-F9> 9gt
 nnoremap <A-F10> 10gt
 
 " Enable Buffer navigation like firefox
-nnoremap  <Leader><tab>   :bprevious<CR>
-nnoremap  <S-tab>         :bNext<CR>
+nnoremap  <Leader><S-tab>   :bp<CR>
+nnoremap  <S-tab>         :bn<CR>
 noremap   <A-q>          	<Esc>:bd<CR>
-inoremap  <Leader><tab>   <Esc>:bprevious<CR>i
-inoremap  <S-tab>         <Esc>:bNext<CR>i
+inoremap  <Leader><S-tab>   <Esc>:bp<CR>i
+inoremap  <S-tab>         <Esc>:bn<CR>i
 inoremap  <A-q>           <Esc>:bd<CR>
 
 " Show a list of all open buffers
 nnoremap <Leader>bb :buffers<CR>:b<space>
 
 " toggles between the current and most recently used buffers
-nnoremap <Leader><S-tab> :b#<CR>
+nnoremap <Leader><tab> :b#<CR>
 
 " Zoom window split
 noremap Zz <silent> :NERDTreeClose<CR> <bar> <c-w>_ <bar> <c-w><bar>
