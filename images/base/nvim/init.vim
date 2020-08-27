@@ -88,7 +88,7 @@ let mapleader = ","
 inoremap <C-s> <Esc>:w<CR>i
 
 " Select all
-nnoremap <C-A> ggVG
+nnoremap <Leader><C-e> ggVG
 
 " Go to the nth tabpage
 nnoremap <A-F1> 1gt
