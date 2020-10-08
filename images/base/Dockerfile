@@ -152,7 +152,9 @@ RUN set -ex; \
 	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
 	&& nvim +PlugInstall +qall \
 	# add support for vs code devcontainer
-	&& mkdir -p $HOME/.vscode-server/extensions
+	&& mkdir -p $HOME/.vscode-server/extensions \
+  # add an alias for it that opens vim with the conflicted plugin activated
+  && git config --global alias.conflicted '!nvim +Conflicted'
 
 # script for install CoC.nvim
 COPY coc-install /usr/local/bin/coc-install

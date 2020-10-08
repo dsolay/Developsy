@@ -17,9 +17,6 @@ Plug 'Xuyuanp/nerdtree-git-plugin'
 " Allows you to run git commands from vim
 Plug 'tpope/vim-fugitive'
 
-" Fuzzy file name searcher
-Plug 'ctrlpvim/ctrlp.vim'
-
 " Adds the ability to close all except the current buffer
 Plug 'vim-scripts/BufOnly.vim'
 
@@ -32,20 +29,8 @@ Plug 'vim-airline/vim-airline-themes'
 " Async linter!
 Plug 'w0rp/ale'
 
-" Required for sql completion
-Plug 'vim-scripts/dbext.vim'
-
-" Better repl integration (sends selections to repl).
-Plug 'jpalardy/vim-slime'
-
 " Allows to diff a visual selection.
 Plug 'AndrewRadev/linediff.vim'
-
-" Git commit browser
-Plug 'junegunn/gv.vim'
-
-" Automatically clear search highlight
-Plug 'junegunn/vim-slash'
 
 " Toggle comments
 Plug 'preservim/nerdcommenter'
@@ -58,3 +43,12 @@ Plug 'editorconfig/editorconfig-vim'
 
 " Documentation generator
 Plug 'kkoomen/vim-doge'
+
+" Inserts quotes and parenthesis in pairs as you type
+Plug 'chun-yang/auto-pairs'
+
+" Easy git merge conflict resolution in vizm
+Plug 'christoomey/vim-conflicted'
+
+" files icons
+Plug 'ryanoasis/vim-devicons'

@@ -47,7 +47,11 @@ autocmd Filetype gitcommit setl colorcolumn=72
 " Will search the file as you type your query
 set incsearch
 
-set termguicolors
+if exists('+termguicolors')
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+  set termguicolors
+endif
 
 " This will close the current buffer without closing the window
 command Bd bp|bd #
@@ -81,6 +85,25 @@ set clipboard=unnamedplus
 " Opening a new file when the current buffer has unsaved changes causes files to be hidden instead of closed
 set hidden
 
+" Linebreak on 500 characters
+set linebreak
+
+" Show special characters
+set list
+
+" Wrap lines
+set wrap
+
+" Activate persistent undo
+if has('persistent_undo')
+  set undodir=$HOME/.vim/undo
+  set undofile
+endif
+
+set wildignore=*/.git/*,*/.hg/*,*/.svn/*,*/.DS_Store,_build,*.o,*~,*.pyc | " Ignore version control and os files
+" set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:¶,precedes:«,extends:»  | " Show special characters
+set listchars=tab:\|\ ,nbsp:␣,trail:•,precedes:«,extends:»  | " Show special characters
+
 " Set leader key
 let mapleader = ","
 
@@ -89,6 +112,12 @@ inoremap <C-s> <Esc>:w<CR>i
 
 " Select all
 nnoremap <Leader><C-e> ggVG
+
+" fix indentation
+nnoremap <Leader>fi gg=G
+
+" Clear search
+noremap <silent> <Leader><ESC> :let @/ = ""<CR>
 
 " Go to the nth tabpage
 nnoremap <A-F1> 1gt
@@ -104,11 +133,11 @@ nnoremap <A-F10> 10gt
 
 " Enable Buffer navigation like firefox
 nnoremap  <Leader><S-tab>   :bp<CR>
-nnoremap  <S-tab>         :bn<CR>
-noremap   <A-q>          	<Esc>:bd<CR>
+nnoremap  <S-tab>           :bn<CR>
+noremap   <A-q>          	  <Esc>:bd<CR>
 inoremap  <Leader><S-tab>   <Esc>:bp<CR>i
-inoremap  <S-tab>         <Esc>:bn<CR>i
-inoremap  <A-q>           <Esc>:bd<CR>
+inoremap  <S-tab>           <Esc>:bn<CR>i
+inoremap  <A-q>             <Esc>:bd<CR>
 
 " Show a list of all open buffers
 nnoremap <Leader>bb :buffers<CR>:b<space>
@@ -117,9 +146,53 @@ nnoremap <Leader>bb :buffers<CR>:b<space>
 nnoremap <Leader><tab> :b#<CR>
 
 " Zoom window split
-noremap Zz <silent> :NERDTreeClose<CR> <bar> <c-w>_ <bar> <c-w><bar>
-noremap Zo <c-w>= <bar> :T<CR>
+nnoremap Zz <silent> :NERDTreeClose<CR> <bar> <c-w>_ <bar> <c-w><bar>
+nnoremap Zo <c-w>= <bar> :T<CR>
 
 "
 nnoremap <Leader><Down><Down> :! tmux select-pane -t 2<CR>
 nnoremap <Leader>ga :! tmux split-window -h \; send-keys "ga" Enter<CR>
+
+" Multiple replace with s*
+" hit . to repeatedly replace a change to the word under the cursor
+nnoremap <silent> s* :let @/='\<'.expand('<cword>').'\>'<CR>cgn
+xnoremap <silent> s* "sy:let @/=@s<CR>cgn
+
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+vnoremap <leader>d c<c-r>=system('base64 --decode', @")<cr><esc>
+vnoremap <leader>e c<c-r>=system('base64', @")<cr><esc>
+
+augroup preserve_last_position
+  " Return to last edit position when opening files (You want this!)
+  autocmd BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+augroup END
+
+augroup helpfiles
+  " Enable q to quit file
+  autocmd FileType help nnoremap q :q<CR>
+augroup END
+
+function! CmdLine(str)
+  exe 'menu Foo.Bar :' . a:str
+  emenu Foo.Bar
+  unmenu Foo
+endfunction
+
+function! VisualSelection(direction, extra_filter) range
+  let l:saved_reg = @"
+  execute 'normal! vgvy'
+
+  let l:pattern = escape(@", '\\/.*$^~[]')
+  let l:pattern = substitute(l:pattern, "\n$", '', '')
+
+  if a:direction ==# 'gv'
+    call CmdLine("Ag \"" . l:pattern . "\" " )
+  elseif a:direction ==# 'replace'
+    call CmdLine('%s' . '/'. l:pattern . '/')
+  endif
+
+  let @/ = l:pattern
+  let @" = l:saved_reg
+endfunction
