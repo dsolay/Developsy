@@ -3,16 +3,8 @@
 " ~~ CoC config ~~
 "
 
-" Some servers have issues with backup files, see #649.
-set nobackup
-set nowritebackup
-
 " Give more space for displaying messages.
 set cmdheight=2
-
-" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
-" delays and poor user experience.
-set updatetime=300
 
 " Don't pass messages to |ins-completion-menu|.
 set shortmess+=c
@@ -30,10 +22,10 @@ endif
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
 inoremap <silent><expr> <TAB>
-  \ pumvisible() ? coc#_select_confirm() :
-  \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
-  \ <SID>check_back_space() ? "\<TAB>" :
-  \ coc#refresh()
+      \ pumvisible() ? coc#_select_confirm() :
+      \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
 inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
 function! s:check_back_space() abort
@@ -158,22 +150,14 @@ nnoremap <silt><nowait> <space>p  :<C-u>CocListResume<CR>
 " Search
 noremap <Leader>gs :CocSearch
 
-"
-" ~~ ALE PHP ~~
-"
-
-let g:ale_fixers = {
-  \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-  \}
-
 " Simple debugger integration.
 
 fu! g:SendDBBreak()
-	call system("tmux send-keys -t right 'sb(" . line('.') . ")\n'")
+  call system("tmux send-keys -t right 'sb(" . line('.') . ")\n'")
 endfu
 
 fu! g:SendDBCmd(cmd)
-	call system("tmux send-keys -t right '" . a:cmd . "\n'")
+  call system("tmux send-keys -t right '" . a:cmd . "\n'")
 endfu
 
 au FileType javascript nnoremap <buffer> ,b :call g:SendDBBreak()<cr>
@@ -183,8 +167,13 @@ au FileType javascript nnoremap <buffer> ,c :call g:SendDBCmd('c')<cr>
 au FileType javascript nnoremap <buffer> ,r :call g:SendDBCmd('r')<cr>
 au FileType javascript nnoremap <buffer> ,R :call g:SendDBCmd('restart')<cr>
 
-" Enable jsx by default as many projects use .js extension for jsx files.
-let g:jsx_ext_required = 0
+"
+" ~~ Emmet ~~
+"
 
-autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
-autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
+"Redefine trigger key
+let g:user_emmet_leader_key='<C-z>'
+
+" Enable just for html/css
+let g:user_emmet_install_global = 0
+autocmd FileType html,css EmmetInstall

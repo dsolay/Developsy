@@ -1,5 +1,13 @@
 {
-	"eslint.autoFixOnSave": true,
-	"eslint.filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
-	"prettier.disableSuccessMessage": true
+  "diagnostic.displayByAle": true,
+  "javascript.suggestionActions.enabled": false,
+  "prettier.singleQuote": true,
+  "prettier.eslintIntegration": true,
+  "prettier.stylelintIntegration": false,
+  "prettier.disableSuccessMessage": true,
+  "suggest.removeDuplicateItems": true,
+  "tsserver.npm": "~/.npm-global/bin/npm",
+  "css.validate": false,
+  "scss.validate": false,
+  "vetur.validation.style": false
 }
