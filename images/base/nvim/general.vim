@@ -1,8 +1,8 @@
 " Disallow detection of filetypes
-" filetype off
+filetype off
 
-" filetype plugin indent on    " required
-" runtime macros/matchit.vim
+filetype plugin indent on    " required
+runtime macros/matchit.vim
 
 syntax enable
 
@@ -44,6 +44,14 @@ augroup templatesNew
   autocmd BufNewFile .prettierrc.json   0r ~/.config/nvim/templates/skeleton.prettierrc
 augroup END
 "}}}
+
+" Highlight line only in crrent window
+augroup CursorLine
+  au!
+  au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  au WinLeave * setlocal nocursorline
+augroup END
+
 
 " Stop concealing quotes in JSON
 let g:vim_json_syntax_conceal = 0

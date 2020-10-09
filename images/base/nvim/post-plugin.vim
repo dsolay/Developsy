@@ -59,11 +59,10 @@ autocmd Filetype yaml setl expandtab
 " Highlighting on top of the error gutter is a bit overkill...
 let g:ale_set_highlights = 0
 
+" sings
 let g:ale_sign_error = '✘'
-highlight ALEErrorSign ctermfg=DarkRed ctermbg=NONE
-
-let g:ale_sign_warning = '◉'
-highlight ALEWarningSign ctermfg=Yellow ctermbg=NONE
+let g:ale_sign_warning = ''
+let g:ale_sign_info = ''
 
 " disable linting while typing
 let g:ale_lint_on_text_changed = 'never'
@@ -77,11 +76,23 @@ let g:ale_list_window_size = 5
 let g:ale_fix_on_save = 1
 let g:ale_disable_lsp = 1
 
+let g:ale_fixers = {
+  \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+  \}
+
 "
 " ~~ Vim doge ~~
 "
 noremap <Leader>dg :DogeGenerate
 noremap <Leader>qdg :DogeGenerate<CR>
+
+"
+" ~~ Vimade ~~
+"
+
+let g:vimade = {}
+let g:vimade.fadelevel = 0.7
+let g:vimade.enablesigns = 0
 
 "
 " ~~ Vim comflicted ~~
