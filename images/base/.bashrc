@@ -61,8 +61,9 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # For setting history length see HISTSIZE and HISTFILESIZE in `man bash`.
-HISTSIZE=1000
-HISTFILESIZE=2000
+export HISTSIZE=1000
+export HISTFILESIZE=2000
+export HISTTIMEFORMAT="%d/%m/%y %T "
 
 # Check the window size after each command and, if necessary, update the
 # values of LINES and COLUMNS.
@@ -85,7 +86,8 @@ if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
   source /usr/share/powerline/bindings/bash/powerline.sh
 fi
 
-export FZF_DEFAULT_OPTS='--color=light,hl:12,hl+:15,info:10,bg+:4'
+export FZF_DEFAULT_COMMAND='rg --files --follow --hidden'
+export FZF_DEFAULT_OPTS='-m --color=light,hl:12,hl+:15,info:10,bgi+:4'
 
 if [ "$(command -v fzf 2> /dev/null)" ]; then
 	[ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash

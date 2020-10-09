@@ -10,7 +10,6 @@ ENV EDITOR nvim
 
 ARG NON_ROOT_USER=dev
 ENV USER ${NON_ROOT_USER}
-ENV HOME /home/${USER}
 
 ARG SUDO_VERSION=1.9.2
 ARG TMUX_VERSION=3.1b
@@ -20,72 +19,75 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
 RUN set -ex; \
-	apt-get update \
-	&& apt-get upgrade -y \
-	# reinstall stuff to include man pages...
-	&& rm /etc/dpkg/dpkg.cfg.d/excludes \
-	&& dpkg -l | grep ^ii | cut -d' ' -f3 | grep -v '^libgcc-s1:amd64$' | xargs apt-get install -y --reinstall \
-	# Install essentials tools
-	&& apt-get install --no-install-recommends -y \
-		tree \
-		curl \
-		wget \
-		bc \
+  apt-get update \
+  && apt-get upgrade -y \
+  # reinstall stuff to include man pages...
+  && rm /etc/dpkg/dpkg.cfg.d/excludes \
+  && dpkg -l | grep ^ii | cut -d' ' -f3 | grep -v '^libgcc-s1:amd64$' | xargs apt-get install -y --reinstall \
+  # Install essentials tools
+  && apt-get install --no-install-recommends -y \
+    tree \
+    curl \
+    wget \
+    bc \
     ripgrep \
-		xclip \
-		man-db \
-		htop \
-		dnsutils \
-		net-tools \
-		tcpflow \
-		tcpdump \
-		strace \
-		bash-completion \
-		openssh-client \
-		cloc \
-		less \
-		jq \
-		inetutils-ping \
-		inetutils-traceroute iproute2 \
-		netcat \
-		zip \
-		unzip \
-		p7zip-full \
-		unrar \
-		build-essential \
-		pkgconf \
-		neovim \
-		software-properties-common \
-		shellcheck \
-		exuberant-ctags \
-		python3-pip \
-		editorconfig \
-		powerline \
-		powerline-gitstatus \
-		language-pack-en-base \
-	# Install sudo
-	&& curl -fLo /tmp/sudo.deb https://www.sudo.ws/sudo/dist/packages/$SUDO_VERSION/sudo_$SUDO_VERSION-1_ubu2004_amd64.deb \
-	&& dpkg -i /tmp/sudo.deb \
-	&& rm -rf /tmp/sudo.deb \
-	# Install tmux
-	&& apt-get install --no-install-recommends -y libevent-2.1-7 libevent-dev libncurses-dev \
-	&& curl -fLo /tmp/tmux-$TMUX_VERSION.tar.gz https://github.com/tmux/tmux/releases/download/$TMUX_VERSION/tmux-$TMUX_VERSION.tar.gz \
-	&& tar xzf /tmp/tmux-$TMUX_VERSION.tar.gz --directory /tmp \
-	&& cd /tmp/tmux-$TMUX_VERSION \
-	&& ./configure \
-	&& make && make install \
-	&& cd / \
-	&& rm -rf /tmp/tmux-$TMUX_VERSION* \
-	# Install lastest git
-	&& apt-add-repository ppa:git-core/ppa \
-	&& apt-get update \
-	&& apt-get install --no-install-recommends -y \
-	git \
-	# cache is useless to keep
-	&& apt-get purge -y software-properties-common libevent-dev libncurses-dev \
-	&& apt-get autoremove -y \
-	&& apt-get clean \
-	&& rm -rf /var/lib/apt/lists/*
+    silversearcher-ag \
+    xclip \
+    man-db \
+    htop \
+    dnsutils \
+    net-tools \
+    tcpflow \
+    tcpdump \
+    strace \
+    bash-completion \
+    openssh-client \
+    cloc \
+    less \
+    jq \
+    inetutils-ping \
+    inetutils-traceroute iproute2 \
+    netcat \
+    zip \
+    unzip \
+    p7zip-full \
+    unrar \
+    build-essential \
+    pkgconf \
+    software-properties-common \
+    shellcheck \
+    exuberant-ctags \
+    python3-pip \
+    editorconfig \
+    powerline \
+    powerline-gitstatus \
+    language-pack-en-base \
+    vim \
+  # Install sudo
+  && curl -fLo /tmp/sudo.deb https://www.sudo.ws/sudo/dist/packages/$SUDO_VERSION/sudo_$SUDO_VERSION-1_ubu2004_amd64.deb \
+  && dpkg -i /tmp/sudo.deb \
+  && rm -rf /tmp/sudo.deb \
+  # Install tmux
+  && apt-get install --no-install-recommends -y libevent-2.1-7 libevent-dev libncurses-dev \
+  && curl -fLo /tmp/tmux-$TMUX_VERSION.tar.gz https://github.com/tmux/tmux/releases/download/$TMUX_VERSION/tmux-$TMUX_VERSION.tar.gz \
+  && tar xzf /tmp/tmux-$TMUX_VERSION.tar.gz --directory /tmp \
+  && cd /tmp/tmux-$TMUX_VERSION \
+  && ./configure \
+  && make && make install \
+  && cd / \
+  && rm -rf /tmp/tmux-$TMUX_VERSION* \
+  # Install lastest git and neovim
+  && apt-add-repository ppa:git-core/ppa \
+  && add-apt-repository ppa:neovim-ppa/stable \
+  && apt-get update \
+  && apt-get install --no-install-recommends -y \
+  git \
+  neovim \
+  # cache is useless to keep
+  && apt-get purge -y software-properties-common libevent-dev libncurses-dev \
+  && apt-get autoremove -y \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
 
 # Non root user
 ARG PUID=1000
@@ -94,13 +96,10 @@ ENV PUID ${PUID}
 ENV PGID ${PGID}
 
 RUN groupadd -g ${PGID} ${USER} && \
-	useradd -u ${PUID} -g ${USER} -G sudo -m -s /bin/bash ${USER} \
-	&& echo "${USER} ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers \
-	# The sudo message is annoying, so skip it
-	&& touch $HOME/.sudo_as_admin_successful \
-	&& chown $USER:$USER $HOME/.sudo_as_admin_successful \
-	# Other setup
-	&& echo 'export HISTTIMEFORMAT="%d/%m/%y %T "' >>~/.bashrc
+useradd -u ${PUID} -g ${USER} -m -s /bin/bash ${USER} \
+&& echo "${USER} ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
+
+ENV HOME /home/${USER}
 
 # Install docker dind
 ARG DOCKER_SCRIPT_SOURCE="https://raw.githubusercontent.com/microsoft/vscode-dev-containers/master/script-library/docker-debian.sh"
@@ -110,15 +109,15 @@ ARG SOURCE_SOCKET=/var/run/docker-host.sock
 ARG TARGET_SOCKET=/var/run/docker.sock
 
 RUN apt-get update \
-	# Use Docker script from script library to set things up
-	&& curl -sSL $DOCKER_SCRIPT_SOURCE -o /tmp/docker-setup.sh \
-	&& ([ "${DOCKER_SCRIPT_SHA}" = "dev-mode" ] || (echo "${DOCKER_SCRIPT_SHA} */tmp/docker-setup.sh" | sha256sum -c -)) \
-	&& /bin/bash /tmp/docker-setup.sh "${ENABLE_NONROOT_DOCKER}" "${SOURCE_SOCKET}" "${TARGET_SOCKET}" "${USER}" \
-	&& rm /tmp/docker-setup.sh \
-	# Clean up
-	&& apt-get autoremove -y \
-	&& apt-get clean -y \
-	&& rm -rf /var/lib/apt/lists/*
+  # Use Docker script from script library to set things up
+  && curl -sSL $DOCKER_SCRIPT_SOURCE -o /tmp/docker-setup.sh \
+  && ([ "${DOCKER_SCRIPT_SHA}" = "dev-mode" ] || (echo "${DOCKER_SCRIPT_SHA} */tmp/docker-setup.sh" | sha256sum -c -)) \
+  && /bin/bash /tmp/docker-setup.sh "${ENABLE_NONROOT_DOCKER}" "${SOURCE_SOCKET}" "${TARGET_SOCKET}" "${USER}" \
+  && rm /tmp/docker-setup.sh \
+  # Clean up
+  && apt-get autoremove -y \
+  && apt-get clean -y \
+  && rm -rf /var/lib/apt/lists/*
 
 # Set the user to be our newly created user by default.
 USER ${USER}
@@ -127,32 +126,37 @@ ENV XDG_CONFIG_HOME "$HOME/.config"
 ENV PATH $HOME/bin:$HOME/.local/bin:$PATH
 
 # vim config
-COPY --chown=${USER}:${USER} nvim "$HOME/.config/nvim"
+COPY nvim "$HOME/.config/nvim"
 
 # intalling some utils tools
 RUN set -ex; \
-	mkdir $HOME/bin \
-	&& sudo chown -R $USER:$USER $HOME/.config \
-	# intsll tmux plugin manager
-	&& git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
-	# intalling fzf
-	&& git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.local/share/fzf \
-	&& $HOME/.local/share/fzf/install --bin \
-	&& ln -sf $HOME/.local/share/fzf/bin/fzf $HOME/bin/fzf \
-	# cli for git fuzzy
-	&& git clone https://github.com/bigH/git-fuzzy.git $HOME/.local/share/git-fuzzy \
-	&& ln -sf $HOME/.local/share/git-fuzzy/bin/git-fuzzy $HOME/bin/git-fuzzy \
-	&& curl -fLo /tmp/delta.deb https://github.com/dandavison/delta/releases/download/0.3.0/git-delta_0.3.0_amd64.deb \
-	&& sudo dpkg -i /tmp/delta.deb \
-	&& rm -rf /tmp/delta.deb \
-	# intall tmux session manager
-	&& pip3 install --user tmuxp \
-	# Install vim plug
-	&& sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
-	&& nvim +PlugInstall +qall \
-	# add support for vs code devcontainer
-	&& mkdir -p $HOME/.vscode-server/extensions \
+  # The sudo message is annoying, so skip it
+  touch $HOME/.sudo_as_admin_successful \
+  && chown $USER:$USER $HOME/.sudo_as_admin_successful \
+  # Crete bin directory in home
+  && mkdir $HOME/bin \
+  # fix permissions of .config directory
+  && sudo chown -R $USER:$USER $HOME/.config \
+  # intsll tmux plugin manager
+  && git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
+  # intalling fzf
+  && git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.local/share/fzf \
+  && $HOME/.local/share/fzf/install --bin \
+  && ln -sf $HOME/.local/share/fzf/bin/fzf $HOME/bin/fzf \
+  # cli for git fuzzy
+  && git clone https://github.com/bigH/git-fuzzy.git $HOME/.local/share/git-fuzzy \
+  && ln -sf $HOME/.local/share/git-fuzzy/bin/git-fuzzy $HOME/bin/git-fuzzy \
+  && curl -fLo /tmp/delta.deb https://github.com/dandavison/delta/releases/download/0.3.0/git-delta_0.3.0_amd64.deb \
+  && sudo dpkg -i /tmp/delta.deb \
+  && rm -rf /tmp/delta.deb \
+  # intall tmux session manager
+  && pip3 install --user tmuxp \
+  # Install vim plug
+  && sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
+  #&& nvim +PlugInstall +qall \
+  # add support for vs code devcontainer
+  && mkdir -p $HOME/.vscode-server/extensions \
   # add an alias for it that opens vim with the conflicted plugin activated
   && git config --global alias.conflicted '!nvim +Conflicted'
 
