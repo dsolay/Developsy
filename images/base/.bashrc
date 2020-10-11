@@ -87,7 +87,7 @@ if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
 fi
 
 export FZF_DEFAULT_COMMAND='rg --files --follow --hidden'
-export FZF_DEFAULT_OPTS='-m --color=light,hl:12,hl+:15,info:10,bgi+:4'
+export FZF_DEFAULT_OPTS='-m --color=light,hl:12,hl+:15,info:10,bg+:4'
 
 if [ "$(command -v fzf 2> /dev/null)" ]; then
 	[ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash
