@@ -46,7 +46,8 @@ RUN set -ex; \
     less \
     jq \
     inetutils-ping \
-    inetutils-traceroute iproute2 \
+    inetutils-traceroute \
+    iproute2 \
     netcat \
     zip \
     unzip \
@@ -56,7 +57,7 @@ RUN set -ex; \
     pkgconf \
     software-properties-common \
     shellcheck \
-    exuberant-ctags \
+    universal-ctags \
     python3-pip \
     editorconfig \
     powerline \

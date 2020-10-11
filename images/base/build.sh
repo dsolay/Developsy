@@ -27,8 +27,8 @@ curl -fLo /tmp/delta.deb https://github.com/dandavison/delta/releases/download/0
 sudo dpkg -i /tmp/delta.deb
 rm -rf /tmp/delta.deb
 
-# intall tmux session manager
-pip3 install --user tmuxp
+# Intall some python plugins
+pip3 install --user tmuxp pynvim
 
 # Install vim plug
 sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
