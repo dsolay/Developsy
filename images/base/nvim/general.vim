@@ -10,12 +10,18 @@ if (has("nvim"))
   "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
   let $NVIM_TUI_ENABLE_TRUE_COLOR=1
 endif
+
 if (has("termguicolors"))
   set termguicolors
+
+  " This is only necessary if you use \"set termguicolors".
+  let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+  let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
 endif
 
-set t_8b=^[[48;2;%lu;%lu;%lum
-set t_8f=^[[38;2;%lu;%lu;%lum
+" fixes glitch? in colors when using vim with tmux
+set background=dark
+set t_Co=256
 
 " #TEMPLATES {{{
 " Prefill new files created by vim with contents from the following templates
@@ -58,13 +64,6 @@ let g:vim_json_syntax_conceal = 0
 
 " Enable JSX syntax highlighting in .js files
 let g:jsx_ext_required = 0
-
-"augroup numbertoggle
-"  autocmd!
-"  autocmd BufEnter,FocusGained,InsertLeave * set relativenumber
-"  autocmd BufLeave,FocusLost,InsertEnter   * set norelativenumber
-"augroup END
-
 
 " More natural split opening.
 set splitbelow
@@ -153,6 +152,21 @@ set foldmethod=marker
 set incsearch
 
 set updatetime=300
+
+" Give more space for displaying messages.
+set cmdheight=2
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
+" Always show the signcolumn, otherwise it would shift the text each time
+" diagnostics appear/become resolved.
+if has("patch-8.1.1564")
+  " Recently vim can merge signcolumn and number column into one
+  set signcolumn=number
+else
+  set signcolumn=yes
+endif
 
 " Enable word completion
 set complete+=kspell

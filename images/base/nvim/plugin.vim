@@ -54,7 +54,7 @@ Plug 'christoomey/vim-conflicted'
 Plug 'ryanoasis/vim-devicons'
 
 " Fuzzy search
-" Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 
 " Syntax Highlighting And Indentation For 100+ Languages

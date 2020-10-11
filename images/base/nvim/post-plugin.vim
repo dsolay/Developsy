@@ -1,4 +1,3 @@
-
 " Buffer delete all others (delete all except current one)
 command Bdo BufOnly
 cabbrev bdo BufOnly
@@ -13,7 +12,10 @@ cabbrev ldiffoff LinediffReset
 " Load colors! On the initial install this will error out, so make it silent
 " so it installs without issues.
 silent! colorscheme gruvbox
-set background=dark
+
+"
+" ~~ Airline ~~
+"
 
 " Enable the powerline fonts.
 let g:airline_powerline_fonts = 1
@@ -68,23 +70,23 @@ let g:ale_sign_info = ''
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_insert_leave = 0
 let g:ale_lint_on_enter = 0
+let g:ale_lint_on_filetype_changed = 0
 let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
 let g:ale_open_list = 1
-let g:ale_keep_list_window_open=0
-let g:ale_set_quickfix=0
+let g:ale_keep_list_window_open = 0
+let g:ale_set_quickfix = 0
 let g:ale_list_window_size = 5
 let g:ale_fix_on_save = 1
 let g:ale_disable_lsp = 1
 
 let g:ale_fixers = {
-  \ '*': ['remove_trailing_lines', 'trim_whitespace'],
-  \}
+      \ '*': ['remove_trailing_lines', 'trim_whitespace'],
+      \}
 
 "
 " ~~ Vim doge ~~
 "
 noremap <Leader>dg :DogeGenerate
-noremap <Leader>qdg :DogeGenerate<CR>
 
 "
 " ~~ Vimade ~~
@@ -103,6 +105,12 @@ function! s:setupConflicted()
   nnoremap ]m :GitNextConflict<cr>
 endfunction
 autocmd User VimConflicted call s:setupConflicted()
+
+"
+" ~~ Vim devicons ~~
+"
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols = {}
+let g:WebDevIconsUnicodeDecorateFileNodesExtensionSymbols['vue'] = ''
 
 "
 " ~~ FZF ~~
@@ -156,26 +164,26 @@ endfunction
 nnoremap <silent> <C-p> :call FZFWithDevIcons()<CR>
 
 function! CreateCenteredFloatingWindow()
-    let width = min([&columns - 4, max([80, &columns - 20])])
-    let height = min([&lines - 4, max([20, &lines - 10])])
-    let top = ((&lines - height) / 2) - 1
-    let left = (&columns - width) / 2
-    let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
+  let width = min([&columns - 4, max([80, &columns - 20])])
+  let height = min([&lines - 4, max([20, &lines - 10])])
+  let top = ((&lines - height) / 2) - 1
+  let left = (&columns - width) / 2
+  let opts = {'relative': 'editor', 'row': top, 'col': left, 'width': width, 'height': height, 'style': 'minimal'}
 
-    let top = "╭" . repeat("─", width - 2) . "╮"
-    let mid = "│" . repeat(" ", width - 2) . "│"
-    let bot = "╰" . repeat("─", width - 2) . "╯"
-    let lines = [top] + repeat([mid], height - 2) + [bot]
-    let s:buf = nvim_create_buf(v:false, v:true)
-    call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
-    call nvim_open_win(s:buf, v:true, opts)
-    set winhl=Normal:Floating
-    let opts.row += 1
-    let opts.height -= 2
-    let opts.col += 2
-    let opts.width -= 4
-    call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
-    au BufWipeout <buffer> exe 'bw '.s:buf
+  let top = "╭" . repeat("─", width - 2) . "╮"
+  let mid = "│" . repeat(" ", width - 2) . "│"
+  let bot = "╰" . repeat("─", width - 2) . "╯"
+  let lines = [top] + repeat([mid], height - 2) + [bot]
+  let s:buf = nvim_create_buf(v:false, v:true)
+  call nvim_buf_set_lines(s:buf, 0, -1, v:true, lines)
+  call nvim_open_win(s:buf, v:true, opts)
+  set winhl=Normal:Floating
+  let opts.row += 1
+  let opts.height -= 2
+  let opts.col += 2
+  let opts.width -= 4
+  call nvim_open_win(nvim_create_buf(v:false, v:true), v:true, opts)
+  au BufWipeout <buffer> exe 'bw '.s:buf
 endfunction
 
 command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
