@@ -24,8 +24,7 @@ RUN set -ex; \
   && nvm install $NODE_VERSION \
   # intalling vue
   && npm install -g @vue/cli \
-  # installing
-  && pip3 install --user pynvim \
+  # installing CoC.nvim
   && coc-install \
     --plugin \
     --extensions \
@@ -37,6 +36,7 @@ RUN set -ex; \
 
 COPY nvim /tmp/nvim
 COPY nvim/coc-settings.json $HOME/.config/nvim/coc-settings.json
+COPY nvim/ftplugin $HOME/.config/nvim/ftplugin
 COPY bashrc-additions.sh /tmp/bashrc-additions.sh
 
 RUN set -ex; \

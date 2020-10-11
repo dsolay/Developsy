@@ -3,21 +3,6 @@
 " ~~ CoC config ~~
 "
 
-" Give more space for displaying messages.
-set cmdheight=2
-
-" Don't pass messages to |ins-completion-menu|.
-set shortmess+=c
-
-" Always show the signcolumn, otherwise it would shift the text each time
-" diagnostics appear/become resolved.
-if has("patch-8.1.1564")
-  " Recently vim can merge signcolumn and number column into one
-  set signcolumn=number
-else
-  set signcolumn=yes
-endif
-
 " Use tab for trigger completion with characters ahead and navigate.
 " NOTE: Use command ':verbose imap <tab>' to make sure tab is not mapped by
 " other plugin before putting this into your config.
@@ -89,16 +74,6 @@ augroup mygroup
   autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
 augroup end
 
-" Applying codeAction to the selected region.
-" Example: `<leader>aap` for current paragraph
-xmap <leader>dos  <Plug>(coc-codeaction-selected)
-nmap <leader>dos  <Plug>(coc-codeaction-selected)
-
-" Remap keys for applying codeAction to the current buffer.
-nmap <leader>do  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
 " Map function and class text objects
 " NOTE: Requires 'textDocument.documentSymbol' support from the language server.
 xmap if <Plug>(coc-funcobj-i)
@@ -149,23 +124,6 @@ nnoremap <silt><nowait> <space>p  :<C-u>CocListResume<CR>
 
 " Search
 noremap <Leader>gs :CocSearch
-
-" Simple debugger integration.
-
-fu! g:SendDBBreak()
-  call system("tmux send-keys -t right 'sb(" . line('.') . ")\n'")
-endfu
-
-fu! g:SendDBCmd(cmd)
-  call system("tmux send-keys -t right '" . a:cmd . "\n'")
-endfu
-
-au FileType javascript nnoremap <buffer> ,b :call g:SendDBBreak()<cr>
-au FileType javascript nnoremap <buffer> ,s :call g:SendDBCmd('s')<cr>
-au FileType javascript nnoremap <buffer> ,n :call g:SendDBCmd('n')<cr>
-au FileType javascript nnoremap <buffer> ,c :call g:SendDBCmd('c')<cr>
-au FileType javascript nnoremap <buffer> ,r :call g:SendDBCmd('r')<cr>
-au FileType javascript nnoremap <buffer> ,R :call g:SendDBCmd('restart')<cr>
 
 "
 " ~~ Emmet ~~
