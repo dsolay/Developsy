@@ -16,7 +16,7 @@ function install_extensions() {
   pushd ~/.config/coc/extensions
 
   if [ ! -f package.json ]; then
-    echo '{"dependencies":{}}' >package.json
+    echo '{"dependencies":{}}' > package.json
   fi
 
   npm install $1 --global-style --ignore-scripts --no-bin-links --no-package-lock --only=prod
@@ -24,18 +24,31 @@ function install_extensions() {
   popd
 }
 
-function clear_apt() {
-  sudo apt-get autoremove -y
-  sudo apt-get clean
-  sudo rm -rf /var/lib/apt/lists/*
+function install_node() {
+  os=$(cat /etc/os-release | grep -w ID | cut -d "=" -f 2)
+
+  case $os in
+    ubuntu)
+      sudo apt-get update
+      sudo apt-get install --no-install-recommends -y nodejs npm
+      sudo apt-get autoremove -y
+      sudo apt-get clean
+      sudo rm -rf /var/lib/apt/lists/*
+      ;;
+    alpine)
+      apk add --no-cache nodejs-current@edge-community npm@edge libuv@edge
+      ;;
+    *)
+      echo "Unknown Operating System"
+      ;;
+  esac
 }
 
 # Define required options
 while [[ -n "$1" ]]; do
   case "$1" in
   --plugin)
-    _checkexec node || _checkexec npm || sudo apt-get update && sudo apt-get install --no-install-recommends -y nodejs npm
-    clear_apt
+    _checkexec node || _checkexec npm || install_node
     install_plugin
     ;;
   --extensions)

@@ -1,15 +1,5 @@
 " Disallow detection of filetypes
-filetype off
-
-filetype plugin indent on    " required
-runtime macros/matchit.vim
-
 syntax enable
-
-if (has("nvim"))
-  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
-  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
-endif
 
 if (has("termguicolors"))
   set termguicolors
@@ -79,9 +69,7 @@ set softtabstop=2
 set shiftwidth=2 " when indenting with '>', use 2 spaces width
 "}}}
 
-set number " Show line numbers
-" set noswapfile " No swap file
-set directory^=$HOME/.vim/tmp//
+set directory^=$HOME/.nvim/tmp//
 set nobackup
 set nowritebackup
 
@@ -91,7 +79,7 @@ set wrap
 set formatoptions+=t
 set colorcolumn=+1
 set showmatch
-set lazyredraw
+"set lazyredraw
 
 " #FINDING FILES
 " Use the `:find` command to fuzzy search files in the working directory
@@ -138,7 +126,7 @@ set nofixendofline
 
 " Activate persistent undo
 if has('persistent_undo')
-  set undodir=$HOME/.vim/undo
+  set undodir=$HOME/.nvim/undo
   set undofile
 endif
 

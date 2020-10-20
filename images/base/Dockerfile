@@ -11,7 +11,7 @@ ENV EDITOR nvim
 ARG NON_ROOT_USER=dev
 ENV USER ${NON_ROOT_USER}
 
-ARG SUDO_VERSION=1.9.2
+ARG SUDO_VERSION=1.9.3
 ARG TMUX_VERSION=3.1b
 
 ENV LC_ALL en_US.UTF-8
@@ -21,20 +21,13 @@ ENV LANGUAGE en_US.UTF-8
 RUN set -ex; \
   apt-get update \
   && apt-get upgrade -y \
-  # reinstall stuff to include man pages...
-  && rm /etc/dpkg/dpkg.cfg.d/excludes \
-  && dpkg -l | grep ^ii | cut -d' ' -f3 | grep -v '^libgcc-s1:amd64$' | xargs apt-get install -y --reinstall \
   # Install essentials tools
   && apt-get install --no-install-recommends -y \
-    tree \
     curl \
     wget \
     bc \
     ripgrep \
-    silversearcher-ag \
     xclip \
-    man-db \
-    htop \
     dnsutils \
     net-tools \
     tcpflow \
@@ -42,28 +35,18 @@ RUN set -ex; \
     strace \
     bash-completion \
     openssh-client \
-    cloc \
     less \
-    jq \
     inetutils-ping \
     inetutils-traceroute \
     iproute2 \
     netcat \
-    zip \
-    unzip \
     p7zip-full \
-    unrar \
     build-essential \
     pkgconf \
     software-properties-common \
-    shellcheck \
     universal-ctags \
     python3-pip \
-    editorconfig \
-    powerline \
-    powerline-gitstatus \
     language-pack-en-base \
-    vim \
   # Install sudo
   && curl -fLo /tmp/sudo.deb https://www.sudo.ws/sudo/dist/packages/$SUDO_VERSION/sudo_$SUDO_VERSION-1_ubu2004_amd64.deb \
   && dpkg -i /tmp/sudo.deb \
@@ -82,8 +65,14 @@ RUN set -ex; \
   && add-apt-repository ppa:neovim-ppa/stable \
   && apt-get update \
   && apt-get install --no-install-recommends -y \
-  git \
-  neovim \
+    git \
+    neovim \
+  # install bat
+  && curl -fsSL https://github.com/sharkdp/bat/releases/download/v0.16.0/bat_0.16.0_amd64.deb --output /tmp/bat.deb \
+  && dpkg -i /tmp/bat.deb \
+  && rm -rf /tmp/bat.deb \
+  # intall neovim python plugin
+  && pip3 install pynvim \
   # cache is useless to keep
   && apt-get purge -y software-properties-common libevent-dev libncurses-dev \
   && apt-get autoremove -y \
@@ -103,51 +92,90 @@ useradd -u ${PUID} -g ${USER} -m -s /bin/bash ${USER} \
 ENV HOME /home/${USER}
 
 # Install docker dind
+ARG INSTALL_DOCKER_DIND=false
 ARG DOCKER_SCRIPT_SOURCE="https://raw.githubusercontent.com/microsoft/vscode-dev-containers/master/script-library/docker-debian.sh"
 ARG DOCKER_SCRIPT_SHA="dev-mode"
 ARG ENABLE_NONROOT_DOCKER="true"
 ARG SOURCE_SOCKET=/var/run/docker-host.sock
 ARG TARGET_SOCKET=/var/run/docker.sock
 
-RUN apt-get update \
-  # Use Docker script from script library to set things up
-  && curl -sSL $DOCKER_SCRIPT_SOURCE -o /tmp/docker-setup.sh \
-  && ([ "${DOCKER_SCRIPT_SHA}" = "dev-mode" ] || (echo "${DOCKER_SCRIPT_SHA} */tmp/docker-setup.sh" | sha256sum -c -)) \
-  && /bin/bash /tmp/docker-setup.sh "${ENABLE_NONROOT_DOCKER}" "${SOURCE_SOCKET}" "${TARGET_SOCKET}" "${USER}" \
-  && rm /tmp/docker-setup.sh \
-  # Clean up
-  && apt-get autoremove -y \
-  && apt-get clean -y \
-  && rm -rf /var/lib/apt/lists/*
+RUN set -ex; \
+  if [ "$INSTALL_DOCKER_DIND" = "true" ]; then \
+    apt-get update \
+    # Use Docker script from script library to set things up
+    && curl -sSL $DOCKER_SCRIPT_SOURCE -o /tmp/docker-setup.sh \
+    && ([ "${DOCKER_SCRIPT_SHA}" = "dev-mode" ] || (echo "${DOCKER_SCRIPT_SHA} */tmp/docker-setup.sh" | sha256sum -c -)) \
+    && /bin/bash /tmp/docker-setup.sh "${ENABLE_NONROOT_DOCKER}" "${SOURCE_SOCKET}" "${TARGET_SOCKET}" "${USER}" \
+    && rm /tmp/docker-setup.sh \
+    # Clean up
+    && apt-get autoremove -y \
+    && apt-get clean -y \
+    && rm -rf /var/lib/apt/lists/* ; \
+  fi
 
 # Set the user to be our newly created user by default.
 USER ${USER}
 
-ENV XDG_CONFIG_HOME "$HOME/.config"
-ENV PATH $HOME/bin:$HOME/.local/bin:$PATH
+ARG NVM_VERSION=v0.36.0
+ARG NODE_VERSION=v14.14.0
 
-# vim config
-COPY nvim "$HOME/.config/nvim"
+ENV NVM_DIR $HOME/.nvm
+ENV NPM_HOME $HOME/.npm-global
+ENV XDG_CONFIG_HOME $HOME/.config
+ENV PATH $HOME/bin:$HOME/.local/bin:${NVM_DIR}/versions/node/${NODE_VERSION}/bin:NPM_HOME/bin:$PATH
 
-# Some stuff
-COPY build.sh /tmp/build.sh
-
-RUN sudo chmod +x /tmp/build.sh \
-  && bash /tmp/build.sh \
-  rm /tmp/build.sh
+# neovim config
+COPY nvim $HOME/.config/nvim
 
 # script for install CoC.nvim
 COPY coc-install /usr/local/bin/coc-install
 
+RUN set -ex; \
+  # Crete bin directory in home
+  mkdir $HOME/bin \
+  # fix permissions of home directory
+  && sudo chown -R $USER:$USER $HOME \
+  # intsll tmux plugin manager
+  && git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
+  # intalling fzf
+  && git clone --depth 1 https://github.com/junegunn/fzf.git $HOME/.local/share/fzf \
+  && $HOME/.local/share/fzf/install --bin \
+  && ln -sf $HOME/.local/share/fzf/bin/fzf $HOME/bin/fzf \
+  # Install vim plug
+  && sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
+  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
+  # intalling node version manager
+  && mkdir -p $NVM_DIR \
+  && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash \
+  && . $NVM_DIR/nvm.sh \
+  && nvm install $NODE_VERSION \
+  # Install nvim plugins
+  && nvim +PlugInstall +qall \
+  # installing CoC.nvim extensions
+  && sudo chmod +x /usr/local/bin/coc-install \
+  && coc-install --extensions \
+    "coc-snippets coc-yaml coc-docker coc-json coc-sh coc-fzf-preview" \
+  # install starship prompt
+  && curl -fsSL https://starship.rs/install.sh --output /tmp/starship.sh \
+  && sudo chmod +x /tmp/starship.sh \
+  && sudo bash /tmp/starship.sh --yes \
+  && rm -rf /tmp/starship.sh \
+  # add support for vs code devcontainer
+  && mkdir -p $HOME/.vscode-server/extensions \
+  # add an alias for it that opens vim with the conflicted plugin activated
+  && git config --global alias.conflicted '!nvim +Conflicted'
+
 # Copy configurations
 COPY --chown=${USER}:${USER} inputrc "$HOME/.inputrc"
-COPY --chown=${USER}:${USER} powerline "$HOME/.config/powerline"
 COPY --chown=${USER}:${USER} .bash "$HOME/.bash"
 COPY --chown=${USER}:${USER} .bashrc "$HOME/.bashrc"
 COPY --chown=${USER}:${USER} .tmux.conf "$HOME/.tmux.conf"
 
+WORKDIR $HOME
+
 # Setting the ENTRYPOINT to docker-init.sh will configure non-root access to
 # the Docker socket if "overrideCommand": false is set in devcontainer.json.
 # The script will also execute CMD if you need to alter startup behaviors.
-ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
+# ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
+
 CMD ["/bin/bash"]

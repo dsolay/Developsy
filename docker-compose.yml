@@ -13,7 +13,18 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: ${COMPOSE_PROJECT_NAME}/base:1.0-${UBUNTU_RELEASE}
+    image: ${COMPOSE_PROJECT_NAME}/base:ubuntu
+
+  base-alpine:
+    build:
+      context: ./images/base
+      dockerfile: Dockerfile.alpine
+      args:
+        - NON_ROOT_USER=${NON_ROOT_USER}
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    image: ${COMPOSE_PROJECT_NAME}/base:alpine
 
   sandbox:
     build:
@@ -99,9 +110,9 @@ services:
         - base
       image: ${COMPOSE_PROJECT_NAME}/laravel-dev:base-1.0
 
-  nodejs-dev:
+  vue:
     build:
-      context: ./images/nodejs-dev
+      context: ./images/vue
       dockerfile: Dockerfile
       args:
         - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
@@ -111,7 +122,19 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/nodejs-dev:1.0-${UBUNTU_RELEASE}
+    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu
+
+  vue-alpine:
+    build:
+      context: ./images/vue
+      dockerfile: Dockerfile.alpine
+      args:
+        - http_proxy
+        - https_proxy
+        - no_proxy
+    depends_on:
+      - base-alpine
+    image: ${COMPOSE_PROJECT_NAME}/vue:alpine
 
   java-dev:
     build:

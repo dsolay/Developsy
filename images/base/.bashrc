@@ -16,7 +16,7 @@
 
 # Shorter version of a common command that it used herein.
 _checkexec() {
-	command -v "$1" > /dev/null
+  command -v "$1" > /dev/null
 }
 
 # General settings
@@ -29,9 +29,9 @@ export MANPAGER=$PAGER
 
 # Simple prompt
 if [ -n "$SSH_CONNECTION" ]; then
-	export PS1="\u@\h: \w \$ "
+  export PS1="\u@\h: \w \$ "
 else
-	export PS1="\w \$ "
+  export PS1="\w \$ "
 fi
 export PS2="> "
 
@@ -40,7 +40,7 @@ export PS2="> "
 # it's already enabled in /etc/bash.bashrc and /etc/profile sources
 # /etc/bash.bashrc).
 if ! shopt -oq posix; then
-	[ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash
+  [ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash
 fi
 
 # Enable tab completion when starting a command with 'sudo'
@@ -49,8 +49,8 @@ fi
 # If not running interactively, don't do anything.  This too is taken
 # from Debian 9's bashrc.
 case $- in
-	*i*) ;;
-	  *) return;;
+  *i*) ;;
+  *) return;;
 esac
 
 # Don't put duplicate lines or lines starting with space in the history.
@@ -90,17 +90,20 @@ export FZF_DEFAULT_COMMAND='rg --files --follow --hidden'
 export FZF_DEFAULT_OPTS='-m --color=light,hl:12,hl+:15,info:10,bg+:4'
 
 if [ "$(command -v fzf 2> /dev/null)" ]; then
-	[ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash
-	[ -f ~/.bash/fzf/fzf-completion.bash ] && . ~/.bash/fzf/fzf-completion.bash
+  [ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash
+  [ -f ~/.bash/fzf/fzf-completion.bash ] && . ~/.bash/fzf/fzf-completion.bash
 
-	# Load plugins
-	source ~/.bash/fzf/fzf-plugins/commons.plugin.bash
-	source ~/.bash/fzf/fzf-plugins/directory.plugin.bash
-	source ~/.bash/fzf/fzf-plugins/forgit.plugin.bash
-	source ~/.bash/fzf/fzf-plugins/tmux.plugin.bash
+  # Load plugins
+  source ~/.bash/fzf/fzf-plugins/commons.plugin.bash
+  source ~/.bash/fzf/fzf-plugins/directory.plugin.bash
+  source ~/.bash/fzf/fzf-plugins/forgit.plugin.bash
+  source ~/.bash/fzf/fzf-plugins/tmux.plugin.bash
 fi
 
 fbind -c
 
+# Use prompt startship
+_checkexec starship && eval "$(starship init bash)"
+
 # gpg
-export GNUPGHOME="~/.gnupg/"
+export GNUPGHOME="$HOME/.gnupg/"
