@@ -9,9 +9,20 @@ cabbrev ldiffthis Linediff
 command Ldiffoff Linediffreset
 cabbrev ldiffoff LinediffReset
 
+"
+" ~~ Gruvbox theme ~~
+"
+set background=dark
+
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_enable_bold = 1    " Enable bold in function name
+let g:gruvbox_material_transparent_background = 1
+let g:gruvbox_material_current_word = 'bold'
+let g:gruvbox_material_background = 'soft'
+
 " Load colors! On the initial install this will error out, so make it silent
 " so it installs without issues.
-silent! colorscheme gruvbox
+silent! colorscheme gruvbox-material
 
 "
 " ~~ Airline ~~
@@ -37,15 +48,12 @@ let g:airline#extensions#tabline#show_splits = 0
 let g:airline#extensions#ale#enabled = 1
 
 " Set the theme for vim-airline
-autocmd VimEnter * AirlineTheme gruvbox
+let g:airline_theme = 'gruvbox_material'
 
 "
 " ~~ NERDTree config ~~
 "
 let g:NERDTreeMouseMode = 3
-let g:NERDTreeGitStatusShowIgnored = 1
-let g:NERDTreeGitStatusConcealBrackets = 1
-let g:NERDTreeGitStatusUseNerdFonts = 1
 
 " Add a mapping for the NERDTree command, so you can just type :T to open
 command T NERDTree
@@ -55,6 +63,9 @@ cabbrev t T
 
 " Use spaces instead just for yaml
 autocmd Filetype yaml setl expandtab
+
+" Toggle nerdtree
+nnoremap <C-b> :NERDTreeToggle %<CR>
 
 "
 " ~~ ALE config ~~

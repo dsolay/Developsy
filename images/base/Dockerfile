@@ -60,13 +60,15 @@ RUN set -ex; \
   && make && make install \
   && cd / \
   && rm -rf /tmp/tmux-$TMUX_VERSION* \
-  # Install lastest git and neovim
+  # Install lastest git, neovim and lazygit
   && apt-add-repository ppa:git-core/ppa \
   && add-apt-repository ppa:neovim-ppa/stable \
+  && add-apt-repository ppa:lazygit-team/release \
   && apt-get update \
   && apt-get install --no-install-recommends -y \
     git \
     neovim \
+    lazygit \
   # install bat
   && curl -fsSL https://github.com/sharkdp/bat/releases/download/v0.16.0/bat_0.16.0_amd64.deb --output /tmp/bat.deb \
   && dpkg -i /tmp/bat.deb \
@@ -162,9 +164,7 @@ RUN set -ex; \
   && sudo bash /tmp/starship.sh --yes \
   && rm -rf /tmp/starship.sh \
   # add support for vs code devcontainer
-  && mkdir -p $HOME/.vscode-server/extensions \
-  # add an alias for it that opens vim with the conflicted plugin activated
-  && git config --global alias.conflicted '!nvim +Conflicted'
+  && mkdir -p $HOME/.vscode-server/extensions
 
 # Copy configurations
 COPY --chown=${USER}:${USER} inputrc "$HOME/.inputrc"
