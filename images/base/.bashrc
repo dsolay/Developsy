@@ -105,5 +105,13 @@ fbind -c
 # Use prompt startship
 _checkexec starship && eval "$(starship init bash)"
 
+# Load nodenv config
+_checkexec nodenv && {
+  if [ -z "$(echo $PATH | grep -w ~/.nodenv/shims)" ]; then
+    eval "$(nodenv init -)"
+  fi
+}
+#eval "$(nodenv init -)"
+
 # gpg
 export GNUPGHOME="$HOME/.gnupg/"

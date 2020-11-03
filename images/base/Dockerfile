@@ -116,13 +116,12 @@ RUN set -ex; \
 # Set the user to be our newly created user by default.
 USER ${USER}
 
-ARG NVM_VERSION=v0.36.0
-ARG NODE_VERSION=v14.14.0
+ARG NODE_VERSION=14.14.0
+ENV NODENV_VERSION ${NODE_VERSION}
 
-ENV NVM_DIR $HOME/.nvm
 ENV NPM_HOME $HOME/.npm-global
 ENV XDG_CONFIG_HOME $HOME/.config
-ENV PATH $HOME/bin:$HOME/.local/bin:${NVM_DIR}/versions/node/${NODE_VERSION}/bin:NPM_HOME/bin:$PATH
+ENV PATH $HOME/.nodenv/bin:$NPM_HOME/bin:$HOME/bin:$HOME/.local/bin:$PATH
 
 # neovim config
 COPY nvim $HOME/.config/nvim
@@ -144,11 +143,13 @@ RUN set -ex; \
   # Install vim plug
   && sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
-  # intalling node version manager
-  && mkdir -p $NVM_DIR \
-  && curl -o- "https://raw.githubusercontent.com/nvm-sh/nvm/$NVM_VERSION/install.sh" | bash \
-  && . $NVM_DIR/nvm.sh \
-  && nvm install $NODE_VERSION \
+  # intalling nodenv
+  && git clone https://github.com/nodenv/nodenv.git ~/.nodenv \
+  && mkdir -p "$(nodenv root)"/plugins \
+  && git clone https://github.com/nodenv/node-build.git "$(nodenv root)"/plugins/node-build \
+  && nodenv install ${NODE_VERSION} \
+  && eval "$(nodenv init -)" \
+  && nodenv global ${NODE_VERSIONi} \
   # Install nvim plugins
   && nvim +PlugInstall +qall \
   # installing CoC.nvim extensions
