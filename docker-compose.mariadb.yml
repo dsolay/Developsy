@@ -14,12 +14,14 @@ services:
         - mariadb:/var/lib/mysql
     environment:
         - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    ports:
+      - "${MARIADB_PORT}:3306"
     networks:
         - mariadb_net
 
   ### phpMyAdmin ###########################################
   phpmyadmin:
-    image: phpmyadmin/phpmyadmin:${PHPMYADMIN_TAG}
+    image: phpmyadmin:${PHPMYADMIN_TAG}
     environment:
     - PMA_ARBITRARY=1
     - PMA_HOST=mariadb
@@ -27,4 +29,3 @@ services:
     - "${PHPMYADMIN_LISTEN_PORT}:80"
     networks:
     - mariadb_net
-
