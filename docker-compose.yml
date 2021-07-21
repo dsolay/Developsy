@@ -20,7 +20,10 @@ services:
       context: ./images/base
       dockerfile: Dockerfile.alpine
       args:
+        - ALPINE_RELEASE=${ALPINE_RELEASE}
         - NON_ROOT_USER=${NON_ROOT_USER}
+        - PUID=${PUID}
+        - PGID=${PGID}
         - http_proxy
         - https_proxy
         - no_proxy

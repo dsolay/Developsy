@@ -1,99 +1,156 @@
 #! /bin/bash
 
-function src() {
-  . ~/.bashrc 2>/dev/null
+# Shorter version of a common command that it used herein.
+_checkexec() {
+  command -v "$1" > /dev/null
 }
 
-# Create a new directory and enter it
-function mkd() {
-  mkdir -p "$@" && cd "$@"
+# Back up a file. Usage "backupthis <filename>"
+backupthis() {
+  cp -riv "$1" "${1}-$(date +%Y%m%d%H%M)".backup;
 }
 
-function md() {
-  mkdir -p "$@" && cd "$@"
+# shell helper functions
+# mostly written by Nathaniel Maia, some pilfered from around the web
+
+# better ls and cd
+unalias ls >/dev/null 2>&1
+ls()
+{
+  command ls --color=auto -F "$@"
 }
 
-function xtree() {
-  find ${1:-.} -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
+unalias cd >/dev/null 2>&1
+# Enter directory and list contents
+cd() {
+  if [ -n "$1" ]; then
+    builtin cd "$@" && ls -pvA --color=auto --group-directories-first
+  else
+    builtin cd ~ && ls -pvA --color=auto --group-directories-first
+  fi
 }
 
-function mktar() {
-  tar cvzf "${1%%/}.tar.gz" "${1%%/}/"
+src()
+{
+  # shellcheck source=../.bashrc
+  source ~/.bashrc 2> /dev/null
 }
 
-function mkzip() {
+nh()
+{
+  nohup "$@" &>/dev/null &
+}
+
+hex2dec()
+{
+  awk 'BEGIN { printf "%d\n",0x$1}'
+}
+
+dec2hex()
+{
+  awk 'BEGIN { printf "%x\n",$1}'
+}
+
+mktar()
+{
+  tar cvzf "${1%%/}.tar.gz"  "${1%%/}/"
+}
+
+mkzip()
+{
   zip -r "${1%%/}.zip" "$1"
 }
 
-function sanitize() {
+sanitize()
+{
   chmod -R u=rwX,g=rX,o= "$@"
 }
 
-function mp() {
-  ps "$@" -u $USER -o pid,%cpu,%mem,bsdtime,command
+mp()
+{
+  ps "$@" -u "$USER" -o pid,%cpu,%mem,bsdtime,command
 }
 
-function pp() {
-  mp f | awk '!/awk/ && $0~var' var=${1:-".*"}
+pp()
+{
+  mp f | awk '!/awk/ && $0~var' var="${1:-".*"}"
 }
 
-function ff() {
+ff()
+{
   find . -type f -iname '*'"$*"'*' -ls
 }
 
-function fe() {
-  find . -type f -iname '*'"${1:-}"'*' -exec ${2:-file} {} \;
+fe()
+{
+  find . -type f -iname '*'"${1:-}"'*' -exec "${2:-file}" {} \;
 }
 
-function arc() {
-  arg="$1"
-  shift
+# Create a new directory and enter it
+mkd()
+{
+  mkdir -p "$@" && cd "$@" || exit
+}
+
+arc()
+{
+  arg="$1"; shift
   case $arg in
-  -e | --extract)
-    if [[ $1 && -e $1 ]]; then
-      case $1 in
-      *.tbz2 | *.tar.bz2) tar xvjf "$1" ;;
-      *.tgz | *.tar.gz) tar xvzf "$1" ;;
-      *.tar.xz) tar xpvf "$1" ;;
-      *.tar) tar xvf "$1" ;;
-      *.gz) gunzip "$1" ;;
-      *.zip) unzip "$1" ;;
-      *.bz2) bunzip2 "$1" ;;
-      *.7zip) 7za e "$1" ;;
-      *.rar) unrar x "$1" ;;
-      *) printf "'%s' cannot be extracted" "$1" ;;
-      esac
-    else
-      printf "'%s' is not a valid file" "$1"
-    fi
-    ;;
-  -n | --new)
-    case $1 in
-    *.tar.*)
-      name="${1%.*}"
-      ext="${1#*.tar}"
-      shift
-      tar cvf "$name" "$@"
-      case $ext in
-      .gz) gzip -9r "$name" ;;
-      .bz2) bzip2 -9zv "$name" ;;
-      esac
-      ;;
-    *.gz)
-      shift
-      gzip -9rk "$@"
-      ;;
-    *.zip) zip -9r "$@" ;;
-    *.7z) 7z a -mx9 "$@" ;;
-    *) printf "bad/unsupported extension" ;;
+    -e|--extract)
+      if [[ $1 && -e $1 ]]; then
+        case $1 in
+          *.tbz2|*.tar.bz2) tar xvjf "$1" ;;
+          *.tgz|*.tar.gz) tar xvzf "$1" ;;
+          *.tar.xz) tar xpvf "$1" ;;
+          *.tar) tar xvf "$1" ;;
+          *.gz) gunzip "$1" ;;
+          *.zip) unzip "$1" ;;
+          *.bz2) bunzip2 "$1" ;;
+          *.7zip) 7za e "$1" ;;
+          *.rar) unrar x "$1" ;;
+          *) printf "'%s' cannot be extracted" "$1"
+        esac
+      else
+        printf "'%s' is not a valid file" "$1"
+        fi ;;
+      -n|--new)
+        case $1 in
+          *.tar.*)
+            name="${1%.*}"
+            ext="${1#*.tar}"; shift
+            tar cvf "$name" "$@"
+            case $ext in
+              .gz) gzip -9r "$name" ;;
+              .bz2) bzip2 -9zv "$name"
+            esac ;;
+          *.gz) shift; gzip -9rk "$@" ;;
+          *.zip) zip -9r "$@" ;;
+          *.7z) 7z a -mx9 "$@" ;;
+          *) printf "bad/unsupported extension"
+        esac ;;
+      *) printf "invalid argument '%s'" "$arg"
     esac
-    ;;
-  *) printf "invalid argument '%s'" "$arg" ;;
-  esac
+}
+
+killp()
+{
+  local pid name sig="-TERM"   # default signal
+  [[ $# -lt 1 || $# -gt 2 ]] && printf "Usage: killp [-SIGNAL] pattern" && return 1
+  [[ $# -eq 2 ]] && sig=$1
+  for pid in $(mp | awk '!/awk/ && $0~pat { print $1 }' pat=${!#}); do
+    name=$(mp | awk '$1~var { print $5 }' var="$pid")
+    ask "Kill process $pid <$name> with signal $sig?" && kill "$sig" "$pid"
+  done
+}
+
+xtree()
+{
+  find "${1:-.}" -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'
 }
 
 # Expand an alias as text - https://unix.stackexchange.com/q/463327/143394
-function expand_alias() {
+expand_alias()
+{
   if [[ -n $ZSH_VERSION ]]; then
     # shellcheck disable=2154  # aliases referenced but not assigned
     printf '%s\n' "${aliases[$1]}"
@@ -102,72 +159,56 @@ function expand_alias() {
   fi
 }
 
-# `tre` is a shorthand for `tree` with hidden files and color enabled, ignoring
-# the `.git` directory, listing directories first. The output gets piped into
-# `less` with options to preserve color and line numbers, unless the output is
-# small enough for one screen.
-function tre() {
-  tree -aC -I '.git|node_modules|bower_components' --dirsfirst "$@" | less -FRNX
-}
-
 # Determine size of a file or total size of a directory
-function fs() {
+fs()
+{
   if du -b /dev/null >/dev/null 2>&1; then
     local arg=-sbh
   else
     local arg=-sh
   fi
-  if [[ -n "$@" ]]; then
+  if [[ -n "$*" ]]; then
     du $arg -- "$@"
   else
     du $arg .[^.]* ./*
   fi
 }
 
-function terminate() {
-  kill -9 $(ps -ef | grep -v grep | grep $1 | awk '{print $2}')
+terminate()
+{
+  for pid in $(pgrep "$1")
+  do 
+    kill -9 "$pid"
+  done
 }
 
-function encrypt() {
-  gpg --recipient $1 --encrypt-files $2
+encrypt()
+{
+  gpg --recipient "$1" --encrypt-files "$2"
 }
 
-function decrypt() {
-  gpg --decrypt-files $1
+decrypt()
+{
+  gpg --decrypt-files "$1"
 }
 
 # Append our default paths
-function appendpath() {
+appendpath()
+{
   case ":$PATH:" in
-  *:"$1":*) ;;
-
+  *:"$1":*)
+    ;;
   *)
     PATH="${PATH:+$PATH:}$1"
     ;;
   esac
 }
 
-# Utility to set "current working directory". For each new tab or window
-# you won't need to cd to the project config every time.
-function fbind() {
-  case "$1" in
-  -u)
-    rm ~/.bindrc
-    ;;
-  -c)
-    if [ -f ~/.bindrc ]; then
-      cd $(cat ~/.bindrc)
-    fi
-    ;;
-  *)
-    echo $(readlink -f "$1") >~/.bindrc
-    ;;
+prependpath () {
+  case ":$PATH:" in
+    *:"$1":*)
+      ;;
+    *)
+      PATH="$1:${PATH:+$PATH}"
   esac
-}
-
-function gc() {
-	local commit='EDITOR=nvim git commit || bash'
-	local diff='GIT_PAGER="less -+F" git diff --staged'
-
-	tmux new-window "$commit" \; split-window -dh "$diff"
 }

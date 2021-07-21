@@ -1,109 +1,235 @@
-#! /bin/bash
+#!/bin/bash
 
-# Colors used for status updates
-ESC_SEQ="\x1b["
-COL_RESET=$ESC_SEQ"39;49;00m"
-COL_RED=$ESC_SEQ"31;01m"
-COL_GREEN=$ESC_SEQ"32;01m"
-COL_YELLOW=$ESC_SEQ"33;01m"
-COL_BLUE=$ESC_SEQ"34;01m"
-COL_MAGENTA=$ESC_SEQ"35;01m"
-COL_CYAN=$ESC_SEQ"36;01m"
+# Shorter version of a common command that it used herein.
+_checkexec() {
+	command -v "$1" > /dev/null
+}
 
-# Detect which `ls` flavor is in use
-if ls --color > /dev/null 2>&1; then # GNU `ls`
-  colorflag="--color"
-  export LS_COLORS='no=00:fi=00:di=01;31:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.gz=01;31:*.bz2=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.avi=01;35:*.fli=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.ogg=01;35:*.mp3=01;35:*.wav=01;35:'
-else # macOS `ls`
-  colorflag="-G"
-  export LSCOLORS='BxBxhxDxfxhxhxhxhxcxcx'
+# Aliases
+# =======
+# A note on how I define aliases.  I try to abstract the command into
+# its initials or something that resembles the original.  This helps me
+# remember the original command when necessary.  There are some
+# exceptions for commands I seldom execute.
+
+if _checkexec docker; then
+	alias dp='docker pull'
+	alias dps='docker ps'
+	alias dpsa='docker ps -a'
+	alias dimg='docker images'
+	alias dit='docker run -it --rm'
+	alias ditx='docker run -it --rm -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix'
+	alias deit='docker exec -it'
+	alias ds='docker start'
+	alias drm='docker rm -f $(docker ps -aq)'
+	alias drmi='docker rmi'
+	alias db='docker build -t'
+	alias dlog='docker logs'
+
+	if _checkexec docker-compose; then
+		alias dc='docker-compose'
+		alias dcb='docker-compose build'
+		alias dcps='docker-compose ps'
+		alias dcup='docker-compose up -d'
+		alias dcrm='docker-compose rm'
+		alias dcst='docker-compose stop'
+		alias dcexc='docker-compose exec'
+		alias dclog='docker-compose logs'
+	fi
 fi
 
-# List all files colorized in long format
-#alias l="ls -lF ${colorflag}"
-### MEGA: I want l and la ti return hisdden files
-alias l="ls -laF ${colorflag}"
+# Common tasks and utilities
+# --------------------------
 
-# List all files colorized in long format, including dot files
-alias la="ls -laF ${colorflag}"
+# Check these because some of them modify the behaviour of standard
+# commands, such as `cp`, `mv`, `rm`, so that they provide verbose
+# output and open a prompt when an existing file is affected.
+#
+# PRO TIP to ignore aliases, start them with a backslash \.  The
+# original command will be used.  This is useful when the original
+# command and the alias have the same name.  Example is my `cp` which is
+# aliased to `cp -iv`:
+#
+#	cp == cp -iv
+#	\cp == cp
 
-# List only directories
-alias lsd="ls -lF ${colorflag} | grep --color=never '^d'"
-
-# Always use color output for `ls`
-alias ls="command ls ${colorflag}"
-
-# Commonly Used Aliases
-alias ..="cd .."
-alias ...="cd ../.."
-alias ....="cd ../../.."
-alias .....="cd ../../../.."
-alias ~="cd ~" # `cd` is probably faster to type though
-alias -- -="cd -"
-alias home="cd ~"
-
-alias h="history"
-alias j="jobs"
-alias e='exit'
-alias c="clear"
-alias cla="clear && ls -la"
-alias cll="clear && ls -l"
-alias cls="clear && ls"
-
-# Always enable colored `grep` output
-# Note: `GREP_OPTIONS="--color=auto"` is deprecated, hence the alias usage.
-alias grep='grep --color=auto'
-alias fgrep='fgrep --color=auto'
-alias egrep='egrep --color=auto'
-
-# Xvfb
-alias xvfb="Xvfb -ac :0 -screen 0 1024x768x16 &"
-
-# git aliases
-alias gaa="git add ."
-alias gd="git --no-pager diff"
-alias git-revert="git reset --hard && git clean -df"
-alias gs="git status"
-alias whoops="git reset --hard && git clean -df"
-alias glog="git log --oneline --decorate --graph"
-alias gloga="git log --oneline --decorate --graph --all"
-alias gsh="git show"
-alias grb="git rebase -i"
-alias gbr="git branch"
-alias gc="git commit"
-alias gck="git checkout"
-
-# Print PATH in human readable
-alias path='echo $PATH | tr ":" "\n" | nl'
+# Build
+alias mk='make && make clean'
+alias smk='sudo make clean install && make clean'
+alias ssmk='sudo make clean install && make clean && rm -iv config.h'
 
 # network
-if _checkexec ss; then
-  alias pls='ss -ltn'
-fi
-
-if _checkexec netstat; then
-  alias pls='netstat -putnea'
-fi
+alias plisten='ss -lptn'
 
 # Disk space
 alias du='du -hs'
 alias duh='du -hs .[^.]*'
 alias df='df -kTh'
 
+# Aliases inside tmux session
+if [[ $TERM == *tmux* ]]; then
+	alias :sp='tmux split-window'
+	alias :vs='tmux split-window -h'
+fi
+alias rtmux='tmux source-file ~/.tmux.conf'
+alias tkw='tmux kill-window -t'
+alias tks='tmux kill-session -t'
+alias tmew='tmux new'
+
+# Record Screen
+alias rec='ffmpeg -video_size 1920x1080 -framerate 60 -f x11grab -i :0.0 -f alsa
+-ac 2 -i pulse ~/Videos/records/$(date +%a-%d-%S).mkv'
+
+if _checkexec python; then
+	alias calc='python -qi -c "from math import *"'
+fi
+
 alias brok='sudo find . -type l -! -exec test -e {} \; -print'
 alias timer='time read -p "Press enter to stop"'
 
 # shellcheck disable=2142
+alias xp='xprop | awk -F\"'" '/CLASS/ {printf \"NAME = %s\nCLASS = %s\n\", \$2, \$4}'"
 alias get='curl --continue-at - --location --progress-bar --remote-name --remote-time'
+
+# services
+alias restart='sudo systemctl restart'
+alias start='sudo systemctl start'
+alias stop='sudo systemctl stop'
+alias status='sudo systemctl status'
+alias disable='sudo systemctl disable'
+alias enable='sudo systemctl enable'
+
+# System
+alias logout='pkill -KILL -U'
+alias off='sudo shutdown -h now'
+
+# cd into the previous working directory by omitting `cd`.
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias mkdir='mkdir -pv'
+alias debug="set -o nounset; set -o xtrace"
+
+# Safer default for cp, mv, rm.  These will print a verbose output of
+# the operations.  If an existing file is affected, they will ask for
+# confirmation.  This can make things a bit more cumbersome, but is a
+# generally safer option.
+alias cp='cp -iv'
+alias mv='mv -iv'
+alias rm='rm -Iv'
+
+# Some common tasks for the `rsync` utiity.
+if _checkexec rsync; then
+	alias rsync='rsync --progress'
+	alias rsyncavz='rsync -avz --progress'
+	alias rsyncavzr='rsync -avzr --progress'
+	alias rsyncavzrd='rsync -avzr --delete --progress'
+fi
+
+# Enable automatic color support for common commands that list output
+# and also add handy aliases.  Note the link to the `dircolors`.  This
+# is provided by my dotfiles.
+if _checkexec dircolors; then
+	dircolors_data="$HOME/.local/share/my_bash/dircolors"
+  if [[ -f "$dircolors_data" ]]
+  then
+    eval "$(dircolors -b "$dircolors_data")"
+  else
+    eval "$(dircolors -b)"
+  fi
+fi
 
 alias diff='diff --color=auto'
 
 alias dir='dir --color=auto'
 alias vdir='vdir --color=auto'
 
-# zip commands
-alias zip='7z a'
-alias unzip='7z e'
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
-# open nvim in current directory
-alias ide='nvim .'
+# Make ls a bit easier to read.  Note that the -A is the same as -a but
+# does not include implied paths (the current dir denoted by a dot and
+# the previous dir denoted by two dots).  I would also like to use the
+# -p option, which prepends a forward slash to directories, but it does
+# not seem to work with symlinked directories. For more, see `man ls`.
+alias la='ls -lia --color=auto --group-directories-first'
+alias ls='ls -pv --color=auto --group-directories-first'
+alias lsa='ls -pvA --color=auto --group-directories-first'
+alias lsl='ls -lhpv --color=auto --group-directories-first'
+alias lsla='ls -lhpvA --color=auto --group-directories-first'
+
+# Extra tasks and infrequently used tools
+# ---------------------------------------
+
+# Certbot.  This is a utility that handles Let's Encrypt certificates
+# for https connections.
+if _checkexec certbot; then
+	alias certm='sudo certbot certonly -a manual -d'
+fi
+
+# When I need to copy the contents of a file to the clipboard
+if _checkexec xclip; then
+	alias xclipc='xclip -selection clipboard' # followed by path to file
+	alias copy='xclip -sel clip <'
+fi
+
+# Git commands
+# ------------
+
+if _checkexec git; then
+	# add, commit
+	alias gadd='git add -v'
+	alias gaddp='git add --patch'
+	alias gaddi='git add --interactive'
+	alias gall='git add -Av'
+	alias gcom='git commit' # opens in the predefined editor.
+	alias gcomm='git commit -m' # pass a message directly: gcomm 'My commit'
+	alias gca='git commit --amend'
+	alias grh='git reset HEAD'
+
+	# stats and diffs
+	alias gsh='git show'
+	alias gsho='git show --oneline'
+	alias glog='git log --oneline'
+	alias gsta='git status'
+	alias gstat='git status'
+	alias gdif='git diff'
+	alias gdiff='git diff'
+	alias gdifs='git diff --stat --summary'
+	alias gdiffss='git diff --stat --summary'
+
+	# branching
+	alias gch='git checkout'
+	alias gchb='git checkout -b'
+	alias gbd='git branch -d'
+	alias gbl='git branch --list'
+	alias gpd='git push origin --delete'
+	alias gmerg='git merge --edit --stat'
+	alias gmerge='git merge --edit --stat'
+
+	# tagging
+	alias gtag='git tag --sign' # followed by the tag's name
+	alias gtagl='git tag --list'
+
+	# syncing
+	alias gpull='git pull'
+	alias gfetch='git fetch'
+	alias gpm='git push -u origin master'
+	alias gph='git push -u origin HEAD'
+fi
+
+# Open current directory in nvim
+alias ide="nvim"
+
+# Update fonts
+alias fup="fc-cache -vf"
+
+# Print PATH in human readable
+alias path='echo $PATH | tr ":" "\n" | nl'
+
+# Emoji
+alias lod='echo "ಠ_ಠ"'
+alias idk='echo "¯\_(ツ)_/¯"'
+alias wtf='echo "❨╯°□°❩╯ ︵ ┻━┻"'
+alias wat='echo "⚆_⚆"'

@@ -1,4 +1,6 @@
-ARG ALPINE_RELEASE=3.12
+# syntax=docker/dockerfile:1.2
+
+ARG ALPINE_RELEASE=3.14.0
 FROM alpine:${ALPINE_RELEASE}
 
 LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
@@ -11,37 +13,31 @@ ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
 RUN set -ex; \
-  echo "@edge http://dl-cdn.alpinelinux.org/alpine/edge/main" >> /etc/apk/repositories \
-  && echo "@edge-community http://dl-cdn.alpinelinux.org/alpine/edge/community" >> /etc/apk/repositories \
-  && echo "@edge-testing http://dl-cdn.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories \
-  && apk update \
-  && apk upgrade \
-  && apk add \
-    curl \
-    ripgrep \
-    xclip \
-    tcpdump \
-    bash \
-    bash-completion \
-    openssh-client \
-    p7zip \
-    ctags \
-    neovim \
-    sudo@edge \
-    tmux \
-    git@edge \
-    fzf@edge-community \
-    python3 \
-    py3-pip \
-    bat@edge-testing \
-    nodejs-current@edge-community \
-    npm@edge \
-    libuv@edge \
-  && apk add --virtual .build-deps \
-    gcc \
-    python3-dev \
-    musl-dev \
-  && pip3 install pynvim \
+  apk --no-cache add \
+    curl=7.77.0-r1 \
+    ripgrep=13.0.0-r0 \
+    xclip=0.13-r1 \
+    tcpdump=4.99.0-r0 \
+    bash=5.1.4-r0 \
+    bash-completion=2.11-r4 \
+    openssh-client-common=8.6_p1-r2 \
+    openssh-client-default=8.6_p1-r2 \
+    p7zip=16.02-r4 \
+    ctags=5.9.20210411.0-r0 \
+    sudo=1.9.7_p1-r1 \
+    tmux=3.2-r0 \
+    git=2.32.0-r0 \
+    python3=3.9.5-r1 \
+    py3-pip=20.3.4-r1 \
+    bat=0.18.1-r0 \
+    libuv=1.41.0-r0 \
+    neovim=0.5.0-r0 \
+    gcc=10.3.1_git20210424-r2 \
+    g++=10.3.1_git20210424-r2 \
+    --repository=http://dl-cdn.alpinelinux.org/alpine/edge/community \
+  && apk --no-cache add --virtual .build-deps \ 
+    python3-dev=3.9.5-r1 \
+  && pip3 install --no-cache-dir pynvim==0.4.3 \
   && apk del .build-deps \
   && rm -vrf /var/cache/apk/*
 
@@ -61,52 +57,35 @@ RUN set -ex; \
     --ingroup ${USER} \
     --shell /bin/bash \
     --uid ${PUID} \
-    ${USER} \
-  && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >>/etc/sudoers
+    ${USER}
 
 ENV HOME /home/${USER}
 
-# Set the user to be our newly created user by default.
-USER ${USER}
-
-ENV NPM_CONFIG_PREFIX $HOME/.npm-global
 ENV XDG_CONFIG_HOME $HOME/.config
-ENV PATH $NPM_CONFIG_PREFIX/bin:$PATH
-
-# script for install CoC.nvim extension
-COPY coc-install /usr/local/bin/coc-install
 
 # novim configuration
+ARG WAIT_TO_PACKER_SYNC=80
+ENV WAIT_TO_PACKER_SYNC ${WAIT_TO_PACKER_SYNC}
+ENV SHELL /bin/bash
 COPY nvim "$HOME/.config/nvim"
+COPY configure_workspace.sh /tmp/configure_workspace.sh
 
-RUN set -ex; \
-  # fix permissions of home directory
-  sudo chown -R $USER:$USER $HOME \
-  # install tmux plugin manager
-  && git clone https://github.com/tmux-plugins/tpm $HOME/.tmux/plugins/tpm \
-  # Install vim-plug
-  && sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim' \
-  # Install nvim plugins
-  && nvim +PlugInstall +qall \
-  # installing CoC.nvim extensions
-  && sudo chmod +x /usr/local/bin/coc-install \
-  && coc-install --extensions \
-    "coc-snippets coc-yaml coc-docker coc-json coc-sh coc-fzf-preview" \
-  # install starship prompt
-  && curl -fsSL https://starship.rs/install.sh --output /tmp/starship.sh \
-  && sudo chmod +x /tmp/starship.sh \
-  && sudo bash /tmp/starship.sh --yes \
-  && rm -rf /tmp/starship.sh \
-  # add an alias for it that opens vim with the conflicted plugin activated
-  && git config --global alias.conflicted '!nvim +Conflicted'
+RUN /tmp/./configure_workspace.sh && \
+  rm -rf /tmp/configure_workspace.sh
 
 # Copy configurations
-COPY --chown=${USER}:${USER} inputrc "$HOME/.inputrc"
-COPY --chown=${USER}:${USER} .bashrc "$HOME/.bashrc"
-COPY --chown=${USER}:${USER} .tmux.conf "$HOME/.tmux.conf"
-COPY --chown=${USER}:${USER} .bash "$HOME/.bash"
+COPY profile /etc/profile
+COPY inputrc "$HOME/.inputrc"
+COPY .bash_profile "$HOME/.bash_profile"
+COPY .bashrc "$HOME/.bashrc"
+COPY .tmux.conf "$HOME/.tmux.conf"
+COPY .bash "$HOME/.bash"
 
+# fix home permissions
+RUN chown -R ${USER}:${USER} ${HOME}
+
+# Set the user to be our newly created user by default.
+USER ${USER}
 WORKDIR $HOME
 
-CMD [ "/bin/bash" ]
+CMD [ "/bin/bash", "-l" ]

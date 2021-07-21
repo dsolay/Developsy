@@ -1,4 +1,5 @@
-#
+#! /bin/bash
+
 # ~/.bashrc
 #
 
@@ -14,13 +15,12 @@
 #
 # Last full review on 2019-06-28
 
-# Shorter version of a common command that it used herein.
-_checkexec() {
-  command -v "$1" > /dev/null
-}
-
 # General settings
 # ================
+
+# Load functions
+# shellcheck source=.bash/funcs.sh
+[ -f ~/.bash/funcs.sh ] && source ~/.bash/funcs.sh
 
 # Default pager.  Note that the option I pass to it will quit once you
 # try to scroll past the end of the file.
@@ -34,14 +34,6 @@ else
   export PS1="\w \$ "
 fi
 export PS2="> "
-
-# The following is taken from the .bashrc shipped with Debian 9.  Enable
-# programmable completion features (you don't need to enable this, if
-# it's already enabled in /etc/bash.bashrc and /etc/profile sources
-# /etc/bash.bashrc).
-if ! shopt -oq posix; then
-  [ -f ~/.bash/bash-completion.bash ] && . ~/.bash/bash-completion.bash
-fi
 
 # Enable tab completion when starting a command with 'sudo'
 [ "$PS1" ] && complete -cf sudo
@@ -61,9 +53,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # For setting history length see HISTSIZE and HISTFILESIZE in `man bash`.
-export HISTSIZE=1000
-export HISTFILESIZE=2000
-export HISTTIMEFORMAT="%d/%m/%y %T "
+HISTSIZE=1000
+HISTFILESIZE=2000
 
 # Check the window size after each command and, if necessary, update the
 # values of LINES and COLUMNS.
@@ -73,45 +64,13 @@ shopt -s checkwinsize
 _checkexec lesspipe && eval "$(SHELL=/bin/sh lesspipe)"
 
 # Load aliases
-[ -f ~/.bash/aliases.sh ] && . ~/.bash/aliases.sh
+# shellcheck source=.bash/aliases.sh
+[ -f ~/.bash/aliases.sh ] && source ~/.bash/aliases.sh
 
-# Load functions
-[ -f ~/.bash/funcs.sh ] && . ~/.bash/funcs.sh
-
-# Powerline configuration
-if [ -f /usr/share/powerline/bindings/bash/powerline.sh ]; then
-  powerline-daemon -q
-  POWERLINE_BASH_CONTINUATION=1
-  POWERLINE_BASH_SELECT=1
-  source /usr/share/powerline/bindings/bash/powerline.sh
-fi
-
-export FZF_DEFAULT_COMMAND='rg --files --follow --hidden'
-export FZF_DEFAULT_OPTS='-m --color=light,hl:12,hl+:15,info:10,bg+:4'
-
-if [ "$(command -v fzf 2> /dev/null)" ]; then
-  [ -f ~/.bash/fzf/key-bindings.bash ] && . ~/.bash/fzf/key-bindings.bash
-  [ -f ~/.bash/fzf/fzf-completion.bash ] && . ~/.bash/fzf/fzf-completion.bash
-
-  # Load plugins
-  source ~/.bash/fzf/fzf-plugins/commons.plugin.bash
-  source ~/.bash/fzf/fzf-plugins/directory.plugin.bash
-  source ~/.bash/fzf/fzf-plugins/forgit.plugin.bash
-  source ~/.bash/fzf/fzf-plugins/tmux.plugin.bash
-fi
-
-fbind -c
+# load lua paths
+_checkexec luarocks && {
+  test ! "$(echo "$PATH" | grep -w ~/.luarocks/bin)" && eval "$(luarocks path)"
+}
 
 # Use prompt startship
 _checkexec starship && eval "$(starship init bash)"
-
-# Load nodenv config
-_checkexec nodenv && {
-  if [ -z "$(echo $PATH | grep -w ~/.nodenv/shims)" ]; then
-    eval "$(nodenv init -)"
-  fi
-}
-#eval "$(nodenv init -)"
-
-# gpg
-export GNUPGHOME="$HOME/.gnupg/"
