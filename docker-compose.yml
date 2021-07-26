@@ -100,7 +100,7 @@ services:
       - android-emulator
     image: ${COMPOSE_PROJECT_NAME}/flutter-dev:${FLUTTER_TAG}
 
-  laravel-dev:
+  laravel:
       build:
         context: ./images/laravel-dev
         dockerfile: Dockerfile
@@ -111,7 +111,7 @@ services:
           - no_proxy
       depends_on:
         - base
-      image: ${COMPOSE_PROJECT_NAME}/laravel-dev:base-1.0
+      image: ${COMPOSE_PROJECT_NAME}/laravel:ubuntu
 
   vue:
     build:
