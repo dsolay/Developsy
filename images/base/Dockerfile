@@ -142,6 +142,7 @@ ARG NODE_VERSION=16.5.0
 ARG GLOW_VERSION=1.4.1
 ENV PATH $HOME/.anyenv/bin:$PATH
 
+SHELL ["/bin/sh", "-c"]
 RUN set -ex; \
   git clone https://github.com/tmux-plugins/tpm "$HOME"/.tmux/plugins/ && \
   git clone https://github.com/wbthomason/packer.nvim \
@@ -160,12 +161,13 @@ RUN set -ex; \
     fixjson@1.1.2 \
     prettier@2.3.2 \
     prettier-plugin-sh@0.7.1 && \
-  curl -sSfL https://git.io/JLbXn | sh -s && \
+  curl -sSfLo /tmp/dotenv-linter.sh https://git.io/JLbXn && \
+  sh /tmp/dotenv-linter.sh && \
   curl -fLo \
     /tmp/glow.tar.gz \
     https://github.com/charmbracelet/glow/releases/download/v${GLOW_VERSION}/glow_${GLOW_VERSION}_linux_x86_64.tar.gz && \
     tar xzf /tmp/glow.tar.gz --directory /usr/local/bin glow && \
-    rm -rf /tmp/glow.tar.gz
+    rm -rf /tmp/glow.tar.gz /tmp/dotenv-linter.sh
 
 
 # configure nvim
