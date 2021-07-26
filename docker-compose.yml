@@ -119,7 +119,6 @@ services:
       dockerfile: Dockerfile
       args:
         - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
-        - NVM_VERSION=${NVM_VERSION}
         - http_proxy
         - https_proxy
         - no_proxy
