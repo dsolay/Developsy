@@ -168,7 +168,7 @@ RUN set -ex; \
 
 # configure nvim
 ENV SHELL /bin/bash
-ENV LSP_SERVERS bashls;diagnosticls
+ENV LSP_SERVERS bashls;diagnosticls;jsonls;yamlls;vimls;sumneko_lua
 
 COPY nvim "$HOME/.config/nvim"
 RUN eval "$(anyenv init -)" && \

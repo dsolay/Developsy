@@ -11,6 +11,7 @@ local function get_parsers()
         'regex',
         'toml',
         'yaml',
+        'vim',
     }
 
     if os.getenv('PARSERS') then
