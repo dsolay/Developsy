@@ -113,9 +113,9 @@ services:
         - base
       image: ${COMPOSE_PROJECT_NAME}/laravel:ubuntu
 
-  vue:
+  vue2:
     build:
-      context: ./images/vue
+      context: ./images/vue2
       dockerfile: Dockerfile
       args:
         - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
@@ -124,7 +124,7 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu
+    image: ${COMPOSE_PROJECT_NAME}/vue2:ubuntu
 
   vue-alpine:
     build:
