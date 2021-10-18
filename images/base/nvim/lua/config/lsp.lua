@@ -57,30 +57,35 @@ local on_attach = function(client, bufnr)
 end
 
 -- Config diagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
+vim.lsp.handlers['textDocument/publishDiagnostics'] =
     vim.lsp.with(
         vim.lsp.diagnostic.on_publish_diagnostics, {
             underline = true,
             virtual_text = false,
             signs = true,
-            update_in_insert = false
+            update_in_insert = false,
         }
     )
 
 -- config that activates keymaps and enables snippet support
 local function make_config(server)
-    local capabilities = vim.lsp.protocol.make_client_capabilities()
-    capabilities.textDocument.completion.completionItem.snippetSupport = true
-    capabilities.textDocument.completion.completionItem.resolveSupport =
-        {properties = {'documentation', 'detail', 'additionalTextEdits'}}
-
+    local capabilities = require('cmp_nvim_lsp').update_capabilities(
+                             vim.lsp.protocol.make_client_capabilities()
+                         )
     local base_config = {capabilities = capabilities, on_attach = on_attach}
 
-    if server == 'vuels' then
-        return merge('force', base_config, require('servers.vue'))
-    elseif server == 'intelephense' then
+    local server_name = server.name
+    if (server_name == 'lua') then
+        return merge('force', base_config, require('servers.lua'))
+    elseif (server_name == 'eslint') then
+        return merge('force', base_config, require('servers.eslint'))
+    elseif (server_name == 'jsonls') then
+        return merge('force', base_config, require('servers.jsonls'))
+    elseif (server_name == 'volar') then
+        return merge('force', base_config, require('servers.volar'))
+    elseif server_name == 'intelephense' then
         return merge('force', base_config, require('servers.intelephense'))
-    elseif server == 'diagnosticls' then
+    elseif server_name == 'diagnosticls' then
         return require('servers.diagnosticls')
     else
         return base_config
@@ -89,14 +94,16 @@ end
 
 -- lsp-install
 local function setup_servers()
-    local nvim_lsp = require('lspconfig')
+    local lsp_installer = require('nvim-lsp-installer')
 
-    local servers = vim.split(os.getenv("LSP_SERVERS"), ';');
-    for _, server in ipairs(servers) do
-        local config = make_config(server)
-
-        nvim_lsp[server].setup(config)
-    end
+    lsp_installer.on_server_ready(
+        function(server)
+            server:setup(make_config(server))
+            vim.cmd [[ do User LspAttachBuffers ]]
+        end
+    )
 end
 
 setup_servers()
+
+

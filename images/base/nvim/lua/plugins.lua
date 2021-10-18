@@ -29,32 +29,38 @@ local function init(use)
     -- File explorer
     use {
         'kyazdani42/nvim-tree.lua',
+        config = [[require('config.nvim-tree')]],
         setup = [[require('plugin-setup.nvim-tree')]],
     }
 
     -- terminal
-    use {
-        'numtostr/FTerm.nvim',
-        config = function() require('FTerm').setup() end,
-        setup = [[require('plugin-setup.fterm')]],
-    }
+    use {'numtostr/FTerm.nvim', setup = [[require('plugin-setup.fterm')]]}
 
-    -- Completion and linting
-    use {'neovim/nvim-lspconfig'}
+    -- LSP
+    use {'neovim/nvim-lspconfig', 'williamboman/nvim-lsp-installer'}
 
     -- sql
-    use {'tpope/vim-dadbod', cmd = {'DB', 'DBUI', 'DBUIToggle'}}
+    use {'tpope/vim-dadbod'}
     use {
         'kristijanhusak/vim-dadbod-ui',
-        after = 'vim-dadbod',
         cmd = {'DBUI', 'DBUIToggle'},
         config = [[require('config.dadbod-ui')]],
         setup = [[require('plugin-setup.dadbod-ui')]],
     }
 
+    -- Pretty symbols
+    use 'kyazdani42/nvim-web-devicons'
+    use {'onsails/lspkind-nvim', config = [[require('config.lspkind')]]}
+
+    -- Completion and snnippets
     use {
         {'kristijanhusak/vim-dadbod-completion', ft = {'sql'}},
-        {'hrsh7th/nvim-compe', config = [[require('config.compe')]]},
+        {'hrsh7th/cmp-nvim-lsp'},
+        {'hrsh7th/cmp-buffer'},
+        {'hrsh7th/cmp-path'},
+        {'hrsh7th/cmp-nvim-lua'},
+        {'hrsh7th/nvim-cmp', config = [[require('config.compe')]]},
+        {'hrsh7th/cmp-vsnip'},
         {'hrsh7th/vim-vsnip'},
         {'rafamadriz/friendly-snippets'},
     }
@@ -74,10 +80,11 @@ local function init(use)
     }
 
     -- Comment
+    use {'b3nj5m1n/kommentary', config = [[require('config.kommentary')]]}
+
     use {
-        'b3nj5m1n/kommentary',
-        config = [[require('config.kommentary')]],
-        keys = {'gc', {'v', 'gc'}},
+        'JoosepAlviste/nvim-ts-context-commentstring',
+        config = [[require('config.nvim-ts-context-commentstring')]],
     }
 
     -- Wrapping/delimiters
@@ -126,9 +133,6 @@ local function init(use)
         cmd = 'Octo',
     }
 
-    -- Pretty symbols
-    use 'kyazdani42/nvim-web-devicons'
-
     -- REPLs
     use {
         'hkupty/iron.nvim',
@@ -138,7 +142,7 @@ local function init(use)
     }
 
     -- Markdown
-    use {'npxbr/glow.nvim', cmd = {'Glow'}}
+    use {'npxbr/glow.nvim', branch = 'main', cmd = 'Glow'}
 
     -- productivity
     use {
@@ -155,9 +159,10 @@ local function init(use)
 
     use {
         'kdav5758/TrueZen.nvim',
+        after = 'twilight.nvim',
         config = [[require('config.true_zen')]],
         setup = [[require('plugin-setup.truezen')]],
-       cmd = {
+        cmd = {
             'TZMinimalist',
             'TZFocus',
             'TZAtaraxis',
@@ -169,6 +174,16 @@ local function init(use)
 
     use {'tpope/vim-unimpaired'}
     use {'tpope/vim-dotenv'}
+    use {
+        'simrat39/symbols-outline.nvim',
+        cmd = 'SymbolsOutline',
+        setup = [[require('plugin-setup.symbols-outline')]],
+    }
+    use {
+        'folke/twilight.nvim',
+        cmd = {'Twilight', 'TwilightEnable'},
+        config = [[require('config.twilight')]],
+    }
 
     -- Highlight colors
     use {
@@ -184,3 +199,4 @@ end
 
 -- init packer
 return require('packer').startup(init)
+

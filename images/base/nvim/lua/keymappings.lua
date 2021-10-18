@@ -19,6 +19,10 @@ map('n', 's*', [[<cmd>let @/=expand('<cword>')<cr>cgn]], opts)
 
 -- Search and replace
 map('n', '<leader>rw', ':%s/<C-R>=expand(\'<cword>\')<cr>/')
+map(
+    'n', '<C-f>',
+    [[<cmd>execute "grep " . "\"". expand("<cword>") . "\" " . finddir('.git/..', expand('%:p:h').';') <Bar> TroubleToggle quickfix<cr>]]
+)
 
 -- Search word under the cursosr
 -- Make * stay at the cursor position
@@ -32,7 +36,7 @@ map('', '<leader><esc>', [[<cmd>let @/=""<cr>]], opts)
 
 -- Quit, close buffers, etc.
 map('n', '<leader>q', '<cmd>qa<cr>', opts)
-map('n', '<leader>x', '<cmd>x!<cr>', opts)
+map('n', '<leader>x', '<cmd>q!<cr>', opts)
 map('n', '<leader>X', '<cmd>x!<cr>', opts)
 
 -- Esc in the terminal

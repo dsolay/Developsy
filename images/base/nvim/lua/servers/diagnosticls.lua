@@ -47,36 +47,6 @@ return {
     },
     init_options = {
         linters = {
-            eslint = {
-                command = get_bin('eslint'),
-                rootPatterns = {'.git'},
-                debounce = 100,
-                args = {
-                    '--stdin',
-                    '--stdin-filename',
-                    '%filepath',
-                    '--format',
-                    'json',
-                },
-                sourceName = 'eslint',
-                parseJson = {
-                    errorsRoot = '[0].messages',
-                    line = 'line',
-                    column = 'column',
-                    endLine = 'endLine',
-                    endColumn = 'endColumn',
-                    message = '${message} [${ruleId}]',
-                    security = 'severity',
-                },
-                securities = {['2'] = 'error', ['1'] = 'warning'},
-                requiredFiles = {
-                    '.eslintrc.js',
-                    '.eslintrc.cjs',
-                    '.eslintrc.yaml',
-                    '.eslintrc.yml',
-                    '.eslintrc.json',
-                },
-            },
             shellcheck = {
                 command = 'shellcheck',
                 debounce = 100,
@@ -102,37 +72,9 @@ return {
                     style = 'style',
                 },
             },
-            spectral = {
-                command = get_bin('spectral'),
-                debounce = 100,
-                args = {
-                    'lint',
-                    '--ignore-unknown-format',
-                    '--format',
-                    'json',
-                    '%filepath',
-                },
-                offsetLine = 1,
-                offsetColumn = 1,
-                sourceName = 'spectral',
-                parseJson = {
-                    line = 'range.start.line',
-                    column = 'range.start.character',
-                    endLine = 'range.end.line',
-                    endColumn = 'range.end.character',
-                    message = '${message} [${code}]',
-                    security = 'severity',
-                },
-                securities = {
-                    ['0'] = 'error',
-                    ['1'] = 'warning',
-                    ['2'] = 'info',
-                    ['3'] = 'hint',
-                },
-            },
             hadolint = {
                 command = 'hadolint',
-               sourceName = 'hadolint',
+                sourceName = 'hadolint',
                 args = {'-f', 'json', '-'},
                 rootPatterns = {'.hadolint.yaml'},
                 parseJson = {
@@ -215,13 +157,7 @@ return {
             },
         },
         filetypes = {
-            javascript = 'eslint',
-            javascriptreact = 'eslint',
-            typescript = 'eslint',
-            typescriptreact = 'eslint',
-            vue = 'eslint',
             sh = 'shellcheck',
-            json = 'spectral',
             dockerfile = 'hadolint',
             css = 'stylelint',
             scss = 'stylelint',
@@ -270,7 +206,8 @@ return {
             json = 'fixjson',
             php = 'prettier',
             markdown = 'prettier',
-            sh = 'prettier'
+            sh = 'prettier',
         },
     },
 }
+

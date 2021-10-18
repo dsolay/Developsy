@@ -138,11 +138,10 @@ RUN set -ex; \
   fi
 
 # installing dev tools
-ARG NODE_VERSION=16.5.0
+ARG NODE_VERSION=16.7.0
 ARG GLOW_VERSION=1.4.1
 ENV PATH $HOME/.anyenv/bin:$PATH
 
-SHELL ["/bin/sh", "-c"]
 RUN set -ex; \
   git clone https://github.com/tmux-plugins/tpm "$HOME"/.tmux/plugins/ && \
   git clone https://github.com/wbthomason/packer.nvim \
@@ -154,12 +153,9 @@ RUN set -ex; \
   nodenv install "$NODE_VERSION" && \
   nodenv global "$NODE_VERSION" && \
   npm install -g --quiet --no-progress \
-    bash-language-server@1.17.0 \
-    diagnostic-languageserver@1.11.0 \
-    markdownlint-cli@0.28.1 \
-    @stoplight/spectral@5.9.1 \
+    markdownlint-cli@0.29.0 \
     fixjson@1.1.2 \
-    prettier@2.3.2 \
+    prettier@2.4.1 \
     prettier-plugin-sh@0.7.1 && \
   curl -sSfLo /tmp/dotenv-linter.sh https://git.io/JLbXn && \
   sh /tmp/dotenv-linter.sh && \
@@ -179,8 +175,9 @@ RUN eval "$(anyenv init -)" && \
   git clone https://github.com/neovim/nvim-lspconfig.git \
     "$HOME"/.local/share/nvim/site/pack/packer/start/nvim-lspconfig && \
   nvim --headless \
-    +"autocmd User PackerComplete sleep 100m | qall" \
-    +PackerSync
+    -c "autocmd User PackerComplete sleep 100m | quitall" \
+    -c PackerSync && \
+  echo "lua require('config.lsp')" > "$HOME"/.config/nvim/plugin/lsp.vim
 
 # Copy configurations
 COPY profile /etc/profile
@@ -191,10 +188,10 @@ COPY .bashrc "$HOME/.bashrc"
 COPY .tmux.conf "$HOME/.tmux.conf"
 
 # final tocuh
+SHELL ["/bin/sh", "-c"]
 RUN set -ex; \
   mkdir -p "$HOME"/.vscode-server/extensions && \
   chown -R ${USER}:${USER} ${HOME}
-  
 
 USER ${USER}
 WORKDIR $HOME
