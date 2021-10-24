@@ -144,14 +144,8 @@ RUN set -ex; \
 
 ARG LSP_SERVERS="bashls diagnosticls jsonls yamlls vimls sumneko_lua"
 
+COPY ./dotfiles/ "$HOME"/.dotfiles/
 RUN set -ex; \
-  git clone \
-    --depth 1 \
-    -b developsy-base \
-    --recurse-submodules \
-    --remote-submodules \
-    https://github.com/dsolay/dotfiles.git \
-    "$HOME"/.dotfiles && \
   rm -rf "$HOME"/.profile "$HOME/.bashrc" && \
   stow -S -d "$HOME"/.dotfiles -t $HOME nvim shell starship tmux && \
   eval "$(anyenv init -)" && \
@@ -163,17 +157,13 @@ RUN set -ex; \
     -c q
 
 # final tocuh
-COPY ./base-init.sh /usr/local/bin/
 SHELL ["/bin/sh", "-c"]
 RUN set -ex; \
   mkdir -p "$HOME"/.vscode-server/extensions && \
-  chown -R ${USER}:${USER} ${HOME} && \
-  chmod +x /usr/local/bin/base-init.sh
+  chown -R ${USER}:${USER} ${HOME}
 
 ENV SHELL /bin/bash
 USER ${USER}
 WORKDIR $HOME
-
-ENTRYPOINT [ "base-init.sh" ]
 
 CMD ["/bin/bash", "-l"]

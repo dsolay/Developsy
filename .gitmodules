@@ -1,0 +1,5 @@
+[submodule "images/base/dotfiles"]
+	path = images/base/dotfiles
+	url = https://github.com/dsolay/dotfiles.git
+	branch = developsy-base
+  ignore = all
