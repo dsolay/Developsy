@@ -73,7 +73,8 @@ RUN set -ex; \
   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes && \
   pip3 install --no-cache-dir \
     pynvim==0.4.3 \
-    trash-cli==0.21.7.24 && \
+    trash-cli==0.21.7.24 \
+    tmuxp==1.9.2 && \
   apt-get autoremove -y && \
   apt-get clean  && \
   rm -rf /var/lib/apt/lists/* /tmp/*
