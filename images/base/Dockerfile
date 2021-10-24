@@ -16,43 +16,44 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-ARG NVIM_VERSION=0.5.0
+ARG NVIM_VERSION=0.5.1
 ARG BAT_VERSION=0.18.2
-ARG LAZYGIT_VERSION=0.28.2
+ARG LAZYGIT_VERSION=0.29
 
 RUN set -ex; \
   apt-get update && \
   apt-get install --no-install-recommends -y \
-    curl=7.74.0-1.2ubuntu3 \
+    curl=7.74.0-1.3ubuntu2 \
     wget=1.21-1ubuntu3 \
-    bc=1.07.1-2build2 \
+    bc=1.07.1-2build3\
     ripgrep=12.1.1-1 \
     xclip=0.13-2 \
     dnsutils=1:9.16.15-1ubuntu1 \
     net-tools=1.60+git20181103.0eebece-1ubuntu2 \
     tcpflow=1.6.1-1 \
     tcpdump=4.99.0-2 \
-    strace=5.11-0ubuntu1 \
+    strace=5.13-0ubuntu1 \
     bash-completion=1:2.11-2ubuntu1 \
-    openssh-client=1:8.4p1-5ubuntu2 \
+    openssh-client=1:8.4p1-6ubuntu2\
     less=551-2 \
     inetutils-ping=2:2.0-1 \
     inetutils-traceroute=2:2.0-1 \
     iproute2=5.10.0-4ubuntu1 \
     netcat=1.217-3ubuntu1 \
     p7zip-full=16.02+dfsg-8 \
-    build-essential=12.9ubuntu1 \
+    build-essential=12.9ubuntu2 \
     pkgconf=1.7.4~git20210206+dcf529b-3 \
-    universal-ctags=0+git20200824-1 \
+    universal-ctags=5.9.20210829.0-1 \
     python3-pip=20.3.4-4 \
-    language-pack-en-base=1:21.10+20210514 \
-    git=1:2.31.1-1ubuntu1 \
-    shellcheck=0.7.1-1build1 \
-    zip=3.0-12 \
+    language-pack-en-base=1:21.10+20211008\
+    git=1:2.32.0-1ubuntu1\
+    shellcheck=0.7.1-1build1.1 \
+    zip=3.0-12build1\
     unzip=6.0-26ubuntu1 \
     rar=2:5.5.0-1build1 \
     unrar=1:6.0.5-1 \
-    man-db=2.9.4-2 && \
+    man-db=2.9.4-2 \
+    stow=2.3.1-1 && \
   curl -fLo \
     /tmp/nvim.tar.gz \
     https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux64.tar.gz && \
@@ -138,14 +139,11 @@ RUN set -ex; \
   fi
 
 # installing dev tools
-ARG NODE_VERSION=16.7.0
+ARG NODE_VERSION=17.0.1
 ARG GLOW_VERSION=1.4.1
 ENV PATH $HOME/.anyenv/bin:$PATH
 
 RUN set -ex; \
-  git clone https://github.com/tmux-plugins/tpm "$HOME"/.tmux/plugins/ && \
-  git clone https://github.com/wbthomason/packer.nvim \
-    "$HOME"/.local/share/nvim/site/pack/packer/start/packer.nvim && \
   git clone https://github.com/anyenv/anyenv "$HOME"/.anyenv && \
   "$HOME"/.anyenv/bin/anyenv install --force-init && \
   anyenv install nodenv && \
@@ -165,27 +163,25 @@ RUN set -ex; \
     tar xzf /tmp/glow.tar.gz --directory /usr/local/bin glow && \
     rm -rf /tmp/glow.tar.gz /tmp/dotenv-linter.sh
 
+ARG LSP_SERVERS="bashls diagnosticls jsonls yamlls vimls sumneko_lua"
 
-# configure nvim
-ENV SHELL /bin/bash
-ENV LSP_SERVERS bashls;diagnosticls;jsonls;yamlls;vimls;sumneko_lua
-
-COPY nvim "$HOME/.config/nvim"
-RUN eval "$(anyenv init -)" && \
-  git clone https://github.com/neovim/nvim-lspconfig.git \
-    "$HOME"/.local/share/nvim/site/pack/packer/start/nvim-lspconfig && \
+RUN set -ex; \
+  git clone \
+    --depth 1 \
+    -b developsy-base \
+    --recurse-submodules \
+    --remote-submodules \
+    https://github.com/dsolay/dotfiles.git \
+    "$HOME"/.dotfiles && \
+  rm -rf "$HOME"/.profile "$HOME/.bashrc" && \
+  stow -S -d "$HOME"/.dotfiles -t $HOME nvim shell starship tmux && \
+  eval "$(anyenv init -)" && \
   nvim --headless \
     -c "autocmd User PackerComplete sleep 100m | quitall" \
     -c PackerSync && \
-  echo "lua require('config.lsp')" > "$HOME"/.config/nvim/plugin/lsp.vim
-
-# Copy configurations
-COPY profile /etc/profile
-COPY .bash_profile "$HOME/.bash_profile"
-COPY inputrc "$HOME/.inputrc"
-COPY .bash "$HOME/.bash"
-COPY .bashrc "$HOME/.bashrc"
-COPY .tmux.conf "$HOME/.tmux.conf"
+  nvim --headless \
+    -c "LspInstall --sync ${LSP_SERVERS}" \
+    -c q
 
 # final tocuh
 SHELL ["/bin/sh", "-c"]
@@ -193,6 +189,7 @@ RUN set -ex; \
   mkdir -p "$HOME"/.vscode-server/extensions && \
   chown -R ${USER}:${USER} ${HOME}
 
+ENV SHELL /bin/bash
 USER ${USER}
 WORKDIR $HOME
 

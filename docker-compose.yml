@@ -8,6 +8,12 @@ services:
       args:
         - UBUNTU_RELEASE=${UBUNTU_RELEASE}
         - NON_ROOT_USER=${NON_ROOT_USER}
+        - LAZYGIT_VERSION=${LAZYGIT_VERSION}
+        - NVIM_VERSION=${NVIM_VERSION}
+        - TMUX_VERSION=${TMUX_VERSION}
+        - NODE_VERSION=${NODE_VERSION}
+        - BAT_VERSION=${BAT_VERSION}
+        - GLOW_VERSION=${GLOW_VERSION}
         - PUID=${PUID}
         - PGID=${PGID}
         - http_proxy
