@@ -53,7 +53,9 @@ RUN set -ex; \
     rar=2:5.5.0-1build1 \
     unrar=1:6.0.5-1 \
     man-db=2.9.4-2 \
-    stow=2.3.1-1 && \
+    stow=2.3.1-1 \
+    httpie=2.4.0-1 \
+    lynx=2.9.0dev.6-3 && \
   curl -fLo \
     /tmp/nvim.tar.gz \
     https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux64.tar.gz && \
@@ -69,7 +71,9 @@ RUN set -ex; \
     https://github.com/sharkdp/bat/releases/download/v$BAT_VERSION/bat_${BAT_VERSION}_amd64.deb && \
   dpkg -i /tmp/bat.deb && \
   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes && \
-  pip3 install --no-cache-dir pynvim==0.4.3 && \
+  pip3 install --no-cache-dir \
+    pynvim==0.4.3 \
+    trash-cli==0.21.7.24 && \
   apt-get autoremove -y && \
   apt-get clean  && \
   rm -rf /var/lib/apt/lists/* /tmp/*
@@ -112,31 +116,6 @@ RUN set -ex; \
   useradd -u ${PUID} -g ${USER} -m -l -s /bin/bash ${USER}
 
 ENV HOME /home/${USER}
-
-# Install docker dind
-ARG INSTALL_DOCKER_DIND=false
-ARG DOCKER_SCRIPT_SOURCE="https://raw.githubusercontent.com/microsoft/vscode-dev-containers/master/script-library/docker-debian.sh"
-ARG DOCKER_SCRIPT_SHA="dev-mode"
-ARG ENABLE_NONROOT_DOCKER="true"
-ARG SOURCE_SOCKET=/var/run/docker-host.sock
-ARG TARGET_SOCKET=/var/run/docker.sock
-
-SHELL ["/bin/bash", "-o", "pipefail", "-c"]
-RUN set -ex; \
-  if [ "$INSTALL_DOCKER_DIND" = "true" ]; then \
-    apt-get update && \
-    curl -sSL $DOCKER_SCRIPT_SOURCE -o /tmp/docker-setup.sh  && \
-    ([ "${DOCKER_SCRIPT_SHA}" = "dev-mode" ] || \
-      (echo "${DOCKER_SCRIPT_SHA} */tmp/docker-setup.sh" | sha256sum -c -)) && \
-    /tmp/docker-setup.sh \
-      "${ENABLE_NONROOT_DOCKER}" \
-      "${SOURCE_SOCKET}" \
-      "${TARGET_SOCKET}" \
-      "${USER}" && \
-    apt-get autoremove -y && \
-    apt-get clean -y && \
-    rm -rf /var/lib/apt/lists/* /tmp/docker-setup.sh ; \
-  fi
 
 # installing dev tools
 ARG NODE_VERSION=17.0.1
@@ -184,18 +163,17 @@ RUN set -ex; \
     -c q
 
 # final tocuh
+COPY ./base-init.sh /usr/local/bin/
 SHELL ["/bin/sh", "-c"]
 RUN set -ex; \
   mkdir -p "$HOME"/.vscode-server/extensions && \
-  chown -R ${USER}:${USER} ${HOME}
+  chown -R ${USER}:${USER} ${HOME} && \
+  chmod +x /usr/local/bin/base-init.sh
 
 ENV SHELL /bin/bash
 USER ${USER}
 WORKDIR $HOME
 
-# Setting the ENTRYPOINT to docker-init.sh will configure non-root access to
-# the Docker socket if "overrideCommand": false is set in devcontainer.json.
-# The script will also execute CMD if you need to alter startup behaviors.
-# ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
+ENTRYPOINT [ "base-init.sh" ]
 
 CMD ["/bin/bash", "-l"]
