@@ -55,7 +55,8 @@ RUN set -ex; \
     man-db=2.9.4-2 \
     stow=2.3.1-1 \
     httpie=2.4.0-1 \
-    lynx=2.9.0dev.6-3 && \
+    lynx=2.9.0dev.6-3 \
+    fzf=0.24.3-1 && \
   curl -fLo \
     /tmp/nvim.tar.gz \
     https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux64.tar.gz && \
