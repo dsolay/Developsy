@@ -20,43 +20,46 @@ ARG NVIM_VERSION=0.5.1
 ARG BAT_VERSION=0.18.2
 ARG LAZYGIT_VERSION=0.29
 
+COPY ./requirements.txt /tmp/
 RUN set -ex; \
   apt-get update && \
   apt-get install --no-install-recommends -y \
-    curl=7.74.0-1.3ubuntu2 \
-    wget=1.21-1ubuntu3 \
-    bc=1.07.1-2build3\
-    ripgrep=12.1.1-1 \
-    xclip=0.13-2 \
-    dnsutils=1:9.16.15-1ubuntu1 \
-    net-tools=1.60+git20181103.0eebece-1ubuntu2 \
-    tcpflow=1.6.1-1 \
-    tcpdump=4.99.0-2 \
-    strace=5.13-0ubuntu1 \
-    bash-completion=1:2.11-2ubuntu1 \
-    openssh-client=1:8.4p1-6ubuntu2\
-    less=551-2 \
-    inetutils-ping=2:2.0-1 \
-    inetutils-traceroute=2:2.0-1 \
-    iproute2=5.10.0-4ubuntu1 \
-    netcat=1.217-3ubuntu1 \
-    p7zip-full=16.02+dfsg-8 \
-    build-essential=12.9ubuntu2 \
-    pkgconf=1.7.4~git20210206+dcf529b-3 \
-    universal-ctags=5.9.20210829.0-1 \
-    python3-pip=20.3.4-4 \
-    language-pack-en-base=1:21.10+20211008\
-    git=1:2.32.0-1ubuntu1\
-    shellcheck=0.7.1-1build1.1 \
-    zip=3.0-12build1\
-    unzip=6.0-26ubuntu1 \
-    rar=2:5.5.0-1build1 \
-    unrar=1:6.0.5-1 \
-    man-db=2.9.4-2 \
-    stow=2.3.1-1 \
-    httpie=2.4.0-1 \
-    lynx=2.9.0dev.6-3 \
-    fzf=0.24.3-1 && \
+    curl \
+    wget \
+    bc \
+    ripgrep \
+    xclip \
+    dnsutils \
+    net-tools \
+    tcpflow \
+    tcpdump \
+    strace \
+    bash-completion \
+    openssh-client \
+    less \
+    inetutils-ping \
+    inetutils-traceroute \
+    iproute2 \
+    netcat \
+    p7zip-full \
+    build-essential \
+    pkgconf \
+    universal-ctags \
+    python3-pip \
+    language-pack-en-base \
+    git \
+    shellcheck \
+    zip \
+    unzip \
+    rar \
+    unrar \
+    man-db \
+    stow \
+    httpie \
+    lynx \
+    fzf \
+    postgresql-client \
+    mariadb-client && \
   curl -fLo \
     /tmp/nvim.tar.gz \
     https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux64.tar.gz && \
@@ -72,10 +75,7 @@ RUN set -ex; \
     https://github.com/sharkdp/bat/releases/download/v$BAT_VERSION/bat_${BAT_VERSION}_amd64.deb && \
   dpkg -i /tmp/bat.deb && \
   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes && \
-  pip3 install --no-cache-dir \
-    pynvim==0.4.3 \
-    trash-cli==0.21.7.24 \
-    tmuxp==1.9.2 && \
+  pip3 install --no-cache-dir --requirement /tmp/requirements.txt && \
   apt-get autoremove -y && \
   apt-get clean  && \
   rm -rf /var/lib/apt/lists/* /tmp/*

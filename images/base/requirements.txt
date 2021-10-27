@@ -1,0 +1,3 @@
+pynvim ~= 0.4.3
+trash-cli ~= 0.21.7.24
+tmuxp ~= 1.9.2
