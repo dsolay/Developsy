@@ -122,7 +122,7 @@ services:
   vue:
     build:
       context: ./images/vue
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.volar
       args:
         - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
         - http_proxy
@@ -130,12 +130,12 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu
+    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-volar
 
-  vue2:
+  vue-vetur:
     build:
-      context: ./images/vue2
-      dockerfile: Dockerfile
+      context: ./images/vue
+      dockerfile: Dockerfile.vetur
       args:
         - DEVELOPSY_BASE_TAG=${DEVELOPSY_BASE_TAG}
         - http_proxy
@@ -143,9 +143,9 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/vue2:ubuntu
+    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-vetur
 
-  java-dev:
+  java:
     build:
       context: ./images/java-dev
       dockerfile: Dockerfile
@@ -159,4 +159,4 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/java-dev:1.0-${UBUNTU_RELEASE}
+    image: ${COMPOSE_PROJECT_NAME}/java:1.0-${UBUNTU_RELEASE}
