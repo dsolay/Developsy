@@ -16,11 +16,6 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
-ARG NVIM_VERSION=0.5.1
-ARG BAT_VERSION=0.18.2
-ARG LAZYGIT_VERSION=0.29
-
-COPY ./requirements.txt /tmp/
 RUN set -ex; \
   apt-get update && \
   apt-get install --no-install-recommends -y \
@@ -60,6 +55,17 @@ RUN set -ex; \
     fzf \
     postgresql-client \
     mariadb-client && \
+  apt-get autoremove -y && \
+  apt-get clean  && \
+  rm -rf /var/lib/apt/lists/*
+
+ARG NVIM_VERSION
+ARG BAT_VERSION
+ARG LAZYGIT_VERSION
+
+COPY ./requirements.txt /tmp/
+
+RUN set -ex; \
   curl -fLo \
     /tmp/nvim.tar.gz \
     https://github.com/neovim/neovim/releases/download/v${NVIM_VERSION}/nvim-linux64.tar.gz && \
@@ -76,11 +82,9 @@ RUN set -ex; \
   dpkg -i /tmp/bat.deb && \
   sh -c "$(curl -fsSL https://starship.rs/install.sh)" -- --yes && \
   pip3 install --no-cache-dir --requirement /tmp/requirements.txt && \
-  apt-get autoremove -y && \
-  apt-get clean  && \
-  rm -rf /var/lib/apt/lists/* /tmp/*
+  rm -rf /tmp/*
 
-ARG TMUX_VERSION=3.2a
+ARG TMUX_VERSION
 WORKDIR /usr/local/src
 RUN set -ex; \
   apt-get update && \
@@ -120,8 +124,8 @@ RUN set -ex; \
 ENV HOME /home/${USER}
 
 # installing dev tools
-ARG NODE_VERSION=17.0.1
-ARG GLOW_VERSION=1.4.1
+ARG NODE_VERSION
+ARG GLOW_VERSION
 ENV PATH $HOME/.anyenv/bin:$PATH
 
 RUN set -ex; \
