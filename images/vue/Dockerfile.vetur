@@ -4,7 +4,7 @@ FROM developsy/base:${DEVELOPSY_BASE_TAG}
 
 LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
 
-ENV LSP_SERVERS $LSP_SERVERS;tailwindcss;tsserver;vuels;eslint;emmet_ls
+ARG LSP_SERVERS="tailwindcss tsserver vuels eslint emmet_ls"
 ENV PARSERS css;scss;html;javascript;typescript;tsx;vue
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
@@ -13,6 +13,9 @@ RUN set -ex; \
   npm install --quiet --no-progress -g \
     vue@2.6.14 \
     typescript@4.4.4 \
-    yarn@1.22.17
+    yarn@1.22.17 && \
+  nvim --headless \
+    -c "LspInstall --sync ${LSP_SERVERS}" \
+    -c q
 
 VOLUME [ "$HOME/.npm", "$HOME/.cache/yarn" ]
