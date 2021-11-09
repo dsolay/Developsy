@@ -128,6 +128,7 @@ ARG NODE_VERSION
 ARG GLOW_VERSION
 ENV PATH $HOME/.anyenv/bin:$PATH
 
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN set -ex; \
   git clone https://github.com/anyenv/anyenv "$HOME"/.anyenv && \
   "$HOME"/.anyenv/bin/anyenv install --force-init && \
