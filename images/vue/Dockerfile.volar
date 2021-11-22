@@ -4,7 +4,7 @@ FROM developsy/base:${DEVELOPSY_BASE_TAG}
 
 LABEL maintainer="Roman Gonzalez <roman.gonzalez.ea@gmail.com>"
 
-ARG LSP_SERVERS="tailwindcss tsserver volar eslint emmet_ls"
+ARG LSP_SERVERS="tailwindcss tsserver volar eslint emmet_ls stylelint_lsp"
 ENV PARSERS css;scss;html;javascript;typescript;tsx;vue
 
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
