@@ -134,6 +134,8 @@ RUN set -ex; \
   "$HOME"/.anyenv/bin/anyenv install --force-init && \
   anyenv install nodenv && \
   eval "$(anyenv init -)" && \
+  git clone https://github.com/nodenv/node-build-update-defs.git \
+    "$(nodenv root)"/plugins/node-build-update-defs && \
   nodenv install "$NODE_VERSION" && \
   nodenv global "$NODE_VERSION" && \
   npm install -g --quiet --no-progress \
