@@ -151,7 +151,7 @@ RUN set -ex; \
     tar xzf /tmp/glow.tar.gz --directory /usr/local/bin glow && \
     rm -rf /tmp/glow.tar.gz /tmp/dotenv-linter.sh
 
-ARG LSP_SERVERS="bashls diagnosticls jsonls yamlls vimls sumneko_lua"
+ARG LSP_SERVERS="bashls diagnosticls jsonls yamlls vimls sumneko_lua spectral"
 
 COPY ./dotfiles/ "$HOME"/.dotfiles/
 RUN set -ex; \
