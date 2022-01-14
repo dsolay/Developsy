@@ -1,0 +1,25 @@
+version: "3.8"
+
+networks:
+  net:
+    name: sqlserver_net
+
+volumes:
+  db:
+    name: sqlserver_vl
+
+services:
+  ### MSSQL ##############################################
+  mssql:
+    container_name: developsy-mssql
+    hostname: developsy-mssql
+    image: ${MSSQL_TAG}
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${MSSQL_PASSWORD}
+    volumes:
+      - db:/var/lib/postgresql/data
+    ports:
+      - "${MSSQL_PORT}:1433"
+    networks:
+      - net
