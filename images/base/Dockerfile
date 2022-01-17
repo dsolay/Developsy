@@ -16,6 +16,7 @@ ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US.UTF-8
 
+# hadolint ignore=DL3008
 RUN set -ex; \
   apt-get update && \
   apt-get install --no-install-recommends -y \
