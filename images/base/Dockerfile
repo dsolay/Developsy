@@ -87,12 +87,13 @@ RUN set -ex; \
 
 ARG TMUX_VERSION
 WORKDIR /usr/local/src
+# hadolint ignore=DL3008
 RUN set -ex; \
   apt-get update && \
   apt-get install --no-install-recommends -y \
-    libevent-2.1-7=2.1.12-stable-1 \
-    libevent-dev=2.1.12-stable-1 \
-    libncurses-dev=6.2+20201114-2build1 && \
+    libevent-2.1-7 \
+    libevent-dev \
+    libncurses-dev && \
   curl -fLO \
     https://github.com/tmux/tmux/releases/download/$TMUX_VERSION/tmux-$TMUX_VERSION.tar.gz && \
   tar xzf \
@@ -152,7 +153,16 @@ RUN set -ex; \
     tar xzf /tmp/glow.tar.gz --directory /usr/local/bin glow && \
     rm -rf /tmp/glow.tar.gz /tmp/dotenv-linter.sh
 
-ARG LSP_SERVERS="bashls diagnosticls jsonls yamlls vimls sumneko_lua spectral"
+ARG GO_VERSION
+ENV PATH $PATH:/usr/local/go/bin
+RUN set -ex; \
+  curl -fLo \
+    /tmp/go.tar.gz \
+    https://golang.org/dl/go${GO_VERSION}.linux-amd64.tar.gz && \
+  tar -C /usr/local -xvf /tmp/go.tar.gz && \
+  rm -rf /tmp/go.tar.gz
+
+ARG LSP_SERVERS="bashls efm jsonls yamlls vimls sumneko_lua spectral"
 
 COPY ./dotfiles/ "$HOME"/.dotfiles/
 RUN set -ex; \

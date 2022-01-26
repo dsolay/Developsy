@@ -14,12 +14,13 @@ services:
         - NODE_VERSION=${NODE_VERSION}
         - BAT_VERSION=${BAT_VERSION}
         - GLOW_VERSION=${GLOW_VERSION}
+        - GO_VERSION=${GO_VERSION}
         - PUID=${PUID}
         - PGID=${PGID}
         - http_proxy
         - https_proxy
         - no_proxy
-    image: ${COMPOSE_PROJECT_NAME}/base:ubuntu
+    image: ${COMPOSE_PROJECT_NAME}/base:ubuntu-${UBUNTU_RELEASE}
 
   base-alpine:
     build:
