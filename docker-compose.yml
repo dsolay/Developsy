@@ -6,7 +6,7 @@ services:
       context: ./images/base
       dockerfile: Dockerfile
       args:
-        - UBUNTU_RELEASE=${UBUNTU_RELEASE}
+        - UBUNTU_RELEASE=${UBUNTU_TAG}
         - NON_ROOT_USER=${NON_ROOT_USER}
         - LAZYGIT_VERSION=${LAZYGIT_VERSION}
         - NVIM_VERSION=${NVIM_VERSION}
@@ -20,7 +20,7 @@ services:
         - http_proxy
         - https_proxy
         - no_proxy
-    image: ${COMPOSE_PROJECT_NAME}/base:ubuntu-${UBUNTU_RELEASE}
+    image: ${COMPOSE_PROJECT_NAME}/base:${DEVELOPSY_BASE_TAG}
 
   base-alpine:
     build:
@@ -131,7 +131,7 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-volar
+    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-${UBUNTU_RELEASE}-volar
 
   vue-vetur:
     build:
@@ -144,7 +144,7 @@ services:
         - no_proxy
     depends_on:
       - base
-    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-vetur
+    image: ${COMPOSE_PROJECT_NAME}/vue:ubuntu-${UBUNTU_RELEASE}-vetur
 
   java:
     build:
