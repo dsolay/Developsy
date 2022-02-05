@@ -1,4 +1,57 @@
 {
   "editor.padding.top": 50,
   "editor.quickSuggestions": { "comments": true },
+  "editor.rulers": [
+    80
+  ],
+  "editor.tabCompletion": "on",
+  "editor.tabSize": 2,
+  "editor.trimAutoWhitespace": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll.eslint": true
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/.git": true,
+    "**/.hg": true,
+    "**/.svn": true,
+    "**/CVS": true,
+    "dist": true
+  },
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "eslint.run": "onSave",
+  "eslint.nodePath": "./node_modules",
+  "eslint.validate": [
+    "javascript",
+    "typescript"
+  ],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "debug.allowBreakpointsEverywhere": true,
+  "[yaml]": {
+    "editor.autoIndent": "advanced"
+  },
+  "[dockercompose]": {
+    "editor.autoIndent": "advanced"
+  },
+  "terminal.integrated.profiles.linux": {
+    "bash (login)": {
+      "path": "bash",
+      "args": [
+        "-l"
+      ]
+    }
+  },
+  "[dockerfile]": {
+    "editor.defaultFormatter": "ms-azuretools.vscode-docker"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  }
 }

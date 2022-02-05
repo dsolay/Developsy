@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "visualstudioexptteam.vscodeintellicode",
+    "foxundermoon.shell-format",
+    "redhat.vscode-yaml",
+    "mikestead.dotenv",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-azuretools.vscode-docker"
+  ]
+}
