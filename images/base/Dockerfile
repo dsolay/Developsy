@@ -174,7 +174,15 @@ RUN set -ex; \
     -c PackerSync && \
   nvim --headless \
     -c "LspInstall --sync ${LSP_SERVERS}" \
-    -c q
+    -c q && \
+  export DOGE_PATH="$HOME/.local/share/nvim/site/pack/packer/opt/vim-doge" && \
+  curl -fLo \
+    /tmp/doge.tar.gz \
+    https://github.com/kkoomen/vim-doge/releases/download/"$(cat $DOGE_PATH/.version)"/vim-doge-linux.tar.gz && \
+  mkdir -p $DOGE_PATH/bin && \
+  tar -C $DOGE_PATH/bin -xzf /tmp/doge.tar.gz && \
+  chmod +x $DOGE_PATH/bin/vim-doge && \
+  rm -rf /tmp/doge.tar.gz
 
 # final tocuh
 SHELL ["/bin/sh", "-c"]
